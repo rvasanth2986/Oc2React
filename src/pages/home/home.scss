@@ -1,0 +1,43 @@
+.logos-container {
+  margin: 20px 0 40px 0;
+  text-align: center;
+  svg {
+    display: inline-block;
+  }
+}
+
+.devextreme-logo {
+  width: 200px;
+  height: 34px;
+  margin-bottom: 19px;
+}
+
+.react-logo {
+  width: 184px;
+  height: 68px;
+}
+
+.plus {
+  margin: 23px 10px;
+  width: 22px;
+  height: 22px;
+}
+
+.screen-x-small .logos-container {
+  svg {
+    width: 100%;
+    display: block;
+    &.plus {
+      margin: 0;
+    }
+  }
+}
+.dx-card-new {
+  overflow: hidden;
+  /* box-shadow: 0 1px 3px rgb(0 0 0 / 12%), 0 1px 2px rgb(0 0 0 / 24%); */
+  border-radius: 4px;
+  background-color: #fff;
+  margin: 2px 2px 3px;
+}
+
+
