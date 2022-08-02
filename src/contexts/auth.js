@@ -3,6 +3,8 @@ import { useDispatch } from 'react-redux';
 import { getUser, signIn as sendSignInRequest } from '../api/auth';
 import { authenticate, checkAutoLogin, runLogoutTimer, saveTokenInLocalStorage } from '../services/AuthService';
 import { loginConfirmedAction, loginFailedAction, logout } from '../store/actions/AuthActions';
+import { CustomerResetState } from '../store/actions/CustomerAction';
+import { PathResetState } from '../store/actions/TraceDiagramAction';
 
 
 function AuthProvider(props) {
@@ -70,6 +72,8 @@ function AuthProvider(props) {
   }, []);
 
   const signOut = useCallback(() => {
+    dispatch(PathResetState());
+    dispatch(CustomerResetState());
     dispatch(logout(props.history));
     setUser();
   }, []);

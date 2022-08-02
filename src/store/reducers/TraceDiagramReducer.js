@@ -11,8 +11,10 @@ export function TraceDiagramReducer(state = initialState, action) {
     switch (action.type) {
         case SET_RESET_STATE:
             return Object.assign({}, state, {
-                ...initialState
-              });
+                MatrixDataSetDisplay: { index: 0, maxDataSetNum: 0, destinationIdsWithNoData: [], visibleDestinationsData: [], gridData: [], gridDataNew: [] },
+                MatrixDataRequestFiltersState: { startDate: "", endDate: "",sourceProbeId: "",sourceProbeIdError: false,destinationIds: [],destinationIdsError: false,startDateResults: "", endDateResults: "", sourceProbeIdResults: "", destinationIdsResults: [] },
+                MatrixData: []
+                });
         case DISPLAY_DATA_CHANGE_STATE_VALUE:
             return {
                 ...state,

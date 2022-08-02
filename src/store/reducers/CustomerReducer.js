@@ -12,9 +12,13 @@ export function CustomerReducer(state = initialState, action) {
 
     switch (action.type) {
          case SET_RESET_STATE:
-                return Object.assign({}, state, {
-                    ...initialState
-                  });
+            return Object.assign({}, state, {
+                customer: [],
+                selectedCustomer: '',
+                regions: [],
+                destinations: [],
+                probes:[]
+                });
         case CUSTOMER_LOAD_ACTION:
             return Object.assign({}, state, {
                 customer: action.payload
