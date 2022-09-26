@@ -1,4 +1,4 @@
-import { CUSTOMER_LOAD_ACTION , CUSTOMER_SELECT_ACTION , CUSTOMER_REGIONANDDEST_LOAD ,SAVING_SUCCESS,UPDATE_SUCCESS,DELETE_SUCCESS,SAVING_PROBES_SUCCESS,UPDATE_PROBES_SUCCESS,DELETE_PROBES_SUCCESS, SET_RESET_STATE } from "../actions/CustomerAction";
+import { CUSTOMER_LOAD_ACTION , CUSTOMER_SELECT_ACTION , CUSTOMER_REGIONANDDEST_LOAD ,SAVING_SUCCESS,UPDATE_SUCCESS,DELETE_SUCCESS,SAVING_PROBES_SUCCESS,UPDATE_PROBES_SUCCESS,DELETE_PROBES_SUCCESS, SET_RESET_STATE, ADD_CUSTOMER, UPDATE_CUSTOMER } from "../actions/CustomerAction";
 
 
 const initialState = {
@@ -75,6 +75,14 @@ export function CustomerReducer(state = initialState, action) {
             return Object.assign({}, state, {
                 probes:  ProbesArray 
                 });
+        case ADD_CUSTOMER:
+            return Object.assign({}, state, {
+                customer: [...state.customer, action.payload ]
+                });
+        case UPDATE_CUSTOMER:
+            return Object.assign({}, state, {
+                customer: [...state.customer, action.payload ]
+        });
         default:
             return state;              
 

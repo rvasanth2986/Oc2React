@@ -8,7 +8,34 @@ const PROBES_TABLE_URL = 'https://xnuoz7c495.execute-api.us-east-2.amazonaws.com
 const REGIONS_TABLE_URL = 'https://ijyfzw78x2.execute-api.us-east-2.amazonaws.com/regions_API_v_2_0_0';
 const CUSTOMERS_TABLE_URL = 'https://o97rs2vh5e.execute-api.us-east-2.amazonaws.com/CustomerTableAPI_v_2_0_0';
 
-async function getcustNew(token){
+export async function sendCustomerRequest(token, insertdata, method) {
+    // const URL = '/api/regions';
+     const URL = CUSTOMERS_TABLE_URL;
+     
+     try {
+         const response = await fetch(URL, {
+             method : `${method}`,
+             headers: {
+                 //'Authorization':'eyJraWQiOiIwMjVwRVZ4TWhwMUxyZWhVXC9JVXNaU3h0OHFKWlo5VWJlOGpuSnlqSzVrMD0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJjM2NhMGM4OC02Y2JhLTQ2ZjEtYjIwNy03NTI1YzY4OWI3YmIiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLnVzLWVhc3QtMi5hbWF6b25hd3MuY29tXC91cy1lYXN0LTJfODRjaVl1c1lTIiwiY29nbml0bzp1c2VybmFtZSI6InRlc3QxMjMiLCJvcmlnaW5fanRpIjoiZThiY2E1OGItODk3Yy00OWMxLWEzODktZjA0ZWYyNjE1ZDc5IiwiYXVkIjoiMXRiMm9haHA2aDZsMnRwc3ZuZmxkbWk1OXIiLCJldmVudF9pZCI6IjU2NTYwZWI0LTU2NDktNDI1OS1hMWYzLTY0N2Y0ZmVjNDMyOSIsInRva2VuX3VzZSI6ImlkIiwiYXV0aF90aW1lIjoxNjU0ODQ3MjY2LCJleHAiOjE2NTQ4NTA4NjYsImlhdCI6MTY1NDg0NzI2NiwianRpIjoiMDliZGFmNDktNDYyOC00ZWExLTk4MDMtODk3ZTgyMmM0MzBmIiwiZW1haWwiOiJtYW5pYXNkaUBnbWFpbC5jb20ifQ.Q3lEQCaxPClAe_SJjmUnOMJFpMoEJTrr01w6UMVRyzL9WEnEC0FrssX7gCvcVuVhnOSx9PDyvOFLcrdKSP7o8r2lU0TbwkfNioF88L0LrOtDdUKov1WfChocnk_0G6-Pe6eO46qtbsPmxIgP5gLJR2VMuoHdn-jmE1D5_8D_8JJF2QIYYfU8L54GoMKVu3Ed8InPmLLMONkbS-RbeXMMllBXx-ttLUAzPUAQz3NYNoqQIxH80MBOFRjF7fLlYw8LJf2Cmzg9Js6t0XHmj3F77oZRI2jA4hKkMcgNrEKniNu4U_YFFehzKyqGXvCIsdjkQl7t-ibGzgJw3fAZVqZ7gg', 
+                 //'Authorization' :`${token}`,
+                 'Content-Type': 'application/json'
+             },
+             body: `${JSON.stringify(insertdata)}`
+ 
+             
+         })
+         const data = await response.json();
+         console.log(data);
+         return data;
+     }
+     catch (e) {
+         console.log(e);
+         return null;
+     }
+   }
+
+
+async function getcustNew(token) {
    // const url = `https://27d8cq8ta8.execute-api.ap-south-1.amazonaws.com/v1`;
     // const url = `https://8gbfk1tdn0.execute-api.ap-south-1.amazonaws.com/v2`;
     const url = `https://8u7em4q19l.execute-api.ap-south-1.amazonaws.com/withoutcors`;
@@ -36,18 +63,14 @@ async function getcustNew(token){
         console.log(response);
 
         let convertedCustomersArray = [];
-
        // Convert each awsJSON formatted object into a JSON object and push it into a new array.
          for (let customerObj of data.body.Items) {
              convertedCustomersArray.push(unmarshall(customerObj));
          }
-         
         //  for (let customerObj of data.body.Items) {
         //     convertedCustomersArray.push(customerObj);
         // }
-
          return convertedCustomersArray;
-
     }
     catch (error) {
         console.log(error.message);
@@ -316,13 +339,9 @@ async function getCustomerProbes(selectedCustomer,token) {
         for (let destinationObj of data.body.destination.Items) {
             convertedDestinationsArray.push(unmarshall(destinationObj));
         }
-
         console.log("convertedProbesArray:", convertedProbesArray);
         console.log("convertedDestinationsArray:", convertedDestinationsArray);
-
-
         return { convertedProbesArray, convertedDestinationsArray };
-
     }
     catch (e) {
         console.log(e);

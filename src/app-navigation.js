@@ -18,6 +18,11 @@ export const navigation = [
     text: 'Path View',
     path: '/pathview',
      icon: 'columnfield'
+  },
+  {
+    text: 'Customer',
+    path: '/customer',
+     icon: 'user'
   }
   // ,
   // {

@@ -1,6 +1,8 @@
-import { getCustomers, getCustomers_new } from "../../services/CustomerServcie";
+import { getCustomers, getCustomers_new, sendCustomerRequest } from "../../services/CustomerServcie";
 
 import { sendRequest,DeleteRequest,sendProbesRequest,DeleteProbesRequest } from "../../services/ProbesConfigService";
+
+
 
 export const CUSTOMER_LOAD_ACTION = '[customer action] customer load';
 export const CUSTOMER_SELECT_ACTION = '[customer action] customer select';
@@ -20,7 +22,8 @@ export const SAVING_ERROR = 'SAVING_ERROR';
 export const SAVING_CANCEL = 'SAVING_CANCEL';
 export const SET_CHANGES = 'SET_CHANGES';
 export const SET_EDIT_ROW_KEY = 'SET_EDIT_ROW_KEY';
-
+export const ADD_CUSTOMER= 'ADD_CUSTOMER';
+export const UPDATE_CUSTOMER = 'UPDATE_CUSTOMER'
 export const SET_RESET_STATE = '[customer action] Reset State';
 
 
@@ -61,9 +64,6 @@ export async function saveChange(dispatch, change,insertdata,token) {
       dispatch({ type: SAVING_PENDING });
   
       try {
-          
-       
-  
         change.data = data;
         if (change.type=="insert"){
           data = await sendChange(token, change,insertdata,'POST');
@@ -117,9 +117,6 @@ export async function saveProbesChange(dispatch, change,insertdata,token) {
     dispatch({ type: SAVING_PENDING });
 
     try {
-        
-      
-
       change.data = data;
       if (change.type=="insert"){
         data = await sendProbesChange(token, change,insertdata,'POST');
@@ -185,6 +182,21 @@ export async function saveProbesChange(dispatch, change,insertdata,token) {
         return null;
     }
   }
+
+  async function sendCustomerData(token, change,insertdata) {
+    switch (change.type) {
+      case 'insert':
+        return sendCustomerRequest(token,insertdata,"POST");
+      case 'update':
+        return sendCustomerRequest(token,insertdata,"PUT");
+      case 'remove':
+        //return sendRequest(`${url}/DeleteOrder`, 'DELETE', { key: change.key });
+        return DeleteRequest(token,insertdata,"DELETE");
+      default:
+        return null;
+    }
+  }
+
   async function sendProbesChange(token, change,insertdata) {
     switch (change.type) {
       case 'insert':
@@ -198,3 +210,47 @@ export async function saveProbesChange(dispatch, change,insertdata,token) {
         return null;
     }
   }
+
+  export async function addCustomer(dispatch, change,insertdata,token) {
+    if (change && change.type) {
+      let data;
+  
+      dispatch({ type: SAVING_PENDING });
+  
+      try {
+        change.data = data;
+        if (change.type=="insert"){
+          data = await sendCustomerData(token, change,insertdata,'POST');
+          dispatch({
+            type: ADD_CUSTOMER,
+            payload:insertdata,
+          });
+        }
+        else if(change.type=="update"){
+          data = await sendCustomerData(token, change,insertdata,'PUT');
+          dispatch({
+            type: UPDATE_CUSTOMER,
+            payload:insertdata,
+             
+          });
+        }
+        else if(change.type=="remove"){
+          data = await sendProbesChange(token, change,insertdata);
+          dispatch({
+            type: DELETE_PROBES_SUCCESS,
+            payload: {
+              probeId:insertdata.probeId
+              },
+          });
+        }
+  
+        return data;
+      } catch (err) {
+        dispatch({ type: SAVING_ERROR });
+        throw err;
+      }
+    } else {
+      dispatch({ type: SAVING_CANCEL });
+      return null;
+    }
+  } 

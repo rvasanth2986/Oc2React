@@ -75,6 +75,30 @@ export default function ProbesRegionConfigComponent (){
     },[custstate]);
     
     const  onRowValidating = React.useCallback((e) => {
+        const type=e.oldData==undefined ? "insert":"update";
+        
+        if (type=="insert")
+        {
+            if((e.newData != undefined) ){
+                if((e.newData.region == undefined) || (e.newData.region.length<=0)) {
+                    e.errorText = `Region name missing!`;
+                    e.isValid = false;
+                    return;
+                }
+                
+            }
+        }
+        if (type=="update")
+        {
+            if((e.newData != undefined) ){
+                if((e.newData.region != undefined) && (e.newData.region.length<=0)) {
+                    e.errorText = `Region name missing!`;
+                    e.isValid = false;
+                    return;
+                }
+                
+            }
+        }       
         if (custstate.regions.filter(x=> x.region == e.newData.region).length>0){
                 // alert("Region name exist! please try different name...");
                 e.errorText = `Region name already exist! please try different name...`;
@@ -88,6 +112,7 @@ export default function ProbesRegionConfigComponent (){
         }
        
       });
+
 
       const onSaving = React.useCallback((e) => {
         e.cancel = true;
@@ -258,8 +283,8 @@ export default function ProbesRegionConfigComponent (){
                                      //  onSaving={UpdateProbes}
                                       // onRowUpdated={RowUpdated()}
                                       >
-                                      <Texts addRow="Add New Probes & Dcs" />
-                                      <Popup title="Add Probes & DC" showTitle={true} width={700} height={250} />
+                                      <Texts addRow="Add Region" />
+                                      <Popup title="Region Configuration" showTitle={true} width={700} height={300} />
                                       <Form>
                                       <Item itemType="group" colCount={2} colSpan={2}>
                                           <Item dataField="region" allowEditing={false} />
@@ -308,7 +333,7 @@ export default function ProbesRegionConfigComponent (){
           columnAutoWidth={true}
           columnHidingEnabled={true}
           onSaving={onSavingProbesConfig}
-          onRowValidating={onRowValidating}
+        //   onRowValidating={onRowValidating}
         >
             <LoadPanel enabled />
                                <Toolbar>

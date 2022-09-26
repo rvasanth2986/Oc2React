@@ -152,6 +152,65 @@ const BarChart = ({ metricsData, sourceProbeId, destinationId }) => {
 
     // State to identify which bar is hovered.
     const [hoverId, setHoverId] = useState(null);
+    
+    // start changes vicky 
+//     const [x, setX] = useState(null);
+//   const [listening, setListening] = useState();
+
+  // Replaced with mouse move function, should make sure we're unlistening as well
+//   useEffect(() => {
+//     if (listening) {
+//       const onMouseMove = (event) => {
+//         console.log(event.clientX);
+//        // purely for testing purposes
+//         setX(event.clientX);
+//         setHoverId(index);
+//         // TooltipInPortal expects coordinates to be relative to containerRef
+//         // localPoint returns coordinates relative to the nearest SVG, which is what containerRef is set to.
+//         const eventSvgCoords = localPoint(event);
+//         const left = barX;
+
+//         // Show tooltip and set the data below to be used in the tooltip component.
+//         showTooltip({
+//             tooltipData: d,
+//             tooltipTop: eventSvgCoords?.y,
+//             tooltipLeft: left,
+//         });
+
+//       };
+//       const onMouseLeave = (event) => {
+//         // stop listening on mouse up
+//         // - you should pick whatever event you want to stop listening
+//         // - this is global so it also stops when the mouse is outside the box
+//         hideTooltip();
+//         setHoverId(null);
+//         setListening(false);
+//       };
+//       document.addEventListener("mousemove", onMouseMove);
+//       document.addEventListener("mouseleave", onMouseLeave);
+//       return () => {
+//         document.removeEventListener("mousemove", onMouseMove);
+//         document.removeEventListener("mouseleave", onMouseLeave);
+//       };
+//     }
+//   }, [listening, onMouseMoveWhileDown]);
+function handleMouseMove(event,index,barX,d) { 
+            setHoverId(index);
+            // TooltipInPortal expects coordinates to be relative to containerRef
+            // localPoint returns coordinates relative to the nearest SVG, which is what containerRef is set to.
+            const eventSvgCoords = localPoint(event);
+            const left = barX;
+
+            // Show tooltip and set the data below to be used in the tooltip component.
+            showTooltip({
+                tooltipData: d,
+                tooltipTop: eventSvgCoords?.y,
+                tooltipLeft: left,
+            });
+
+ }
+    // end changes vicky
+
 
     return (
         <>
@@ -197,8 +256,10 @@ const BarChart = ({ metricsData, sourceProbeId, destinationId }) => {
                                     onMouseLeave={() => {
                                         hideTooltip();
                                         setHoverId(null);
+                                        // setListening(false);
                                     }}
-                                    onMouseMove={event => {
+                                    // onMouseMove={(event,index,barX,d) => handleMouseMove(event,index,barX,d) }
+                                    onMouseMove={(event) => {
                                         setHoverId(index);
                                         // TooltipInPortal expects coordinates to be relative to containerRef
                                         // localPoint returns coordinates relative to the nearest SVG, which is what containerRef is set to.
@@ -211,6 +272,7 @@ const BarChart = ({ metricsData, sourceProbeId, destinationId }) => {
                                             tooltipTop: eventSvgCoords?.y,
                                             tooltipLeft: left,
                                         });
+                                        // setListening(true);
                                     }}
                                 />
                             );

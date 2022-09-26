@@ -13,69 +13,39 @@ export default function ({ menuToggleEnabled, title, toggleMenu }) {
   const authstate = useSelector((state) => state.auth);
   const custstate = useSelector((state) => state.cust);
   const [customers, setcustomers] = useState([]);
-   const [active, setActive] =  useState("");
-  const [selectcustomer, setselectcustomer] = useState("");
-  console.log("state",authstate);
-  console.log("Custstate",custstate);
+  // const [active, setActive] =  useState("");
+  //const [selectcustomer, setselectcustomer] = useState("");
+ 
   const dispatch = useDispatch();
 
   const handleChange = evt => {   
-    console.log("change customer evt",evt);
     let newValue = evt.value;
-    console.log("change customer",newValue);
-    setselectcustomer(newValue);
+    //setselectcustomer(newValue);
     dispatch(customerselectAction(newValue));
-    
-    }
+  }
 
   useEffect(() => {
     if (authstate.auth.isauthenticated && customers.length == 0 ) {
-      console.log("Call cust")
-     // dispatch(getCustomerAction(authstate.auth.idToken));
-
-  //    getcustNew(authstate.auth.idToken).then((response) => {
-  //     console.log("Fetch Response",response );
-  //       dispatch(customerloadAction(response));
-  //        setcustomers(response);
-  //        // select the first option by default
-  //        if (custstate.customer.length>0){
-  //         setActive(custstate.customer[0].customerName);
-  //        }
-  // });
-
       getCustomers(authstate.auth.idToken).then((response) => {
         dispatch(customerloadAction(response));
          setcustomers(response);
-         // select the first option by default
-         if (custstate.customer.length>0){
-          setActive(custstate.customer[0].customerName);
-         }
-         
-        // const state = store.getState();
-        // console.log("current stat",state);
-    });
-  //   getcustNew(authstate.auth.idToken).then((response) => {
-  //     console.log("Header Comp Cust",response);
-  //     // const state = store.getState();
-  //     // console.log("current stat",state);
-  // });
+   });
+ 
     }
   },[])
-
+  useEffect(()=>{
+    console.log("Customer loading....");
+    if (custstate.customer.length>0){
+      //setActive(custstate.customer[0].customerName);
+      //setselectcustomer(custstate.customer[0].customerId);
+      dispatch(customerselectAction(custstate.customer[0].customerId));
+      
+     }
+  },[custstate.customer])
   useEffect(() => {
     if (custstate.selectedCustomer && custstate.selectedCustomer !== "" ) {
-      console.log("Propes Load event")
-     // dispatch(getCustomerAction(authstate.auth.idToken));
-     getRegionsProbesByCustomer(custstate.selectedCustomer,authstate.auth.idToken,dispatch).then((response) => {
-        //dispatch(customerloadAction(response));
-         //setcustomers(response);
-        // const state = store.getState();
-        console.log("PropesRegin",response);
-        // if (response) {
-        //   dispatch(regionanddestinationAction(response));
-        // }
-        
-       
+      console.log("Propes Load event");
+       getRegionsProbesByCustomer(custstate.selectedCustomer,authstate.auth.idToken,dispatch).then((response) => {
     });
     }
   },[custstate.selectedCustomer])

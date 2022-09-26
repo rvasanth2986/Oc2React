@@ -15,9 +15,12 @@ function AuthProvider(props) {
   useEffect(() => {
     (async function () {
       const result = await checkAutoLogin(dispatch,props.history);
-      if (result.isOk) {
-        setUser(result.data);
+      if (result != undefined){
+        if (result.isOk) {
+          setUser(result.data);
+        }
       }
+      
 
       setLoading(false);
     })();
