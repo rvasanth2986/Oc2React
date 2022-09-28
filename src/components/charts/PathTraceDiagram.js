@@ -302,11 +302,11 @@ const PathTraceDiagram = ({ sourceProbeId, metricsData }) => {
         <React.Fragment>
             {traceRouteData.children.length > 0 &&
                 <div>
-                    <div className={'row'}>
+                    <div className={'row px-3'}>
                         <div class="col-md-6">
-                            <div className={'row'}>
-                                <div className={'responsive-paddings'}>
-                                    <div className="m-portlet m-portlet--head-sm ">
+                            <div style={{height:"50%"}}  className={''}>
+                                
+                                    <div  style={{ height:"100%" }} className="m-portlet m-portlet--head-sm ">
                                         <div class="m-portlet__head">
                                             <div class="m-portlet__head-caption">
                                                 <div class="m-portlet__head-title">
@@ -327,9 +327,9 @@ const PathTraceDiagram = ({ sourceProbeId, metricsData }) => {
                                             </Slider>
                                         </div>
                                     </div>
-                                </div>
+                                
                             </div>
-                            <div className={'row'}>
+                            <div style={{height:"50%"}}  className={''}>
                                 {/* {pathstate.MatrixDataSetDisplay.destinationIdsWithNoData.length > 0 &&
                 <Grid item xs={12}>
                     <p className="header2-style" style={{ textAlign: 'left', marginLeft: '1.5em', fontWeight: 'bold', display: 'inline-block', whiteSpace: 'pre-wrap' }}>
@@ -346,8 +346,8 @@ const PathTraceDiagram = ({ sourceProbeId, metricsData }) => {
 
                 </Grid>
             } */}
-                                {pathstate.MatrixDataSetDisplay.destinationIdsWithNoData.length > 0 && <div className={'responsive-paddings-new'}> <Grid item xs={12} style={{ marginTop: '1em' }}>
-                                    <div className="m-portlet m-portlet--head-sm">
+                                {pathstate.MatrixDataSetDisplay.destinationIdsWithNoData.length > 0 && <div style={{height:"100%"}} className={'responsive-paddings-new p-0'}> <Grid   item xs={12} style={{ marginTop: '1em',height:"100%"  }}>
+                                    <div  style={{ height:"95%" }} className="m-portlet m-portlet--head-sm">
                                         <div class="m-portlet__head">
                                             <div class="m-portlet__head-caption">
                                                 <div class="m-portlet__head-title">
@@ -360,7 +360,7 @@ const PathTraceDiagram = ({ sourceProbeId, metricsData }) => {
                                                 {/* <Grid item xs={12} style={{ marginBottom: '1em', marginLeft: '2em' }}>
                         <p className="header1-style" style={{textAlign: 'left'}}>Showing results for: </p>
                     </Grid> */}
-                                                <Grid item xs={12} style={{ marginBottom: '1em', marginLeft: '2em' }}>
+                                                <Grid item xs={12} style={{  marginLeft: '2em' }}>
 
                                                     {pathstate.MatrixDataSetDisplay.destinationIdsWithNoData.length > 0 && pathstate.MatrixDataSetDisplay.destinationIdsWithNoData.map((dataSet, index) => {
 
@@ -383,7 +383,7 @@ const PathTraceDiagram = ({ sourceProbeId, metricsData }) => {
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div className={'content-block dx-card-new responsive-paddings'}>
+                            <div style={{height:"100%"}} className={'content-block dx-card-new responsive-paddings m-0 p-0'}>
                                 <DataGrid
                                     className={'dx-card-new wide-card'}
                                     dataSource={pathstate.MatrixDataSetDisplay.gridData}
@@ -400,9 +400,10 @@ const PathTraceDiagram = ({ sourceProbeId, metricsData }) => {
                             </div>
                         </div>
                     </div>
+                    <div className={'Clear'}></div>
                     <div className={'responsive-paddings'} style={{ overflowX: 'auto' }}>
                         {/* <Grid style={{ overflowX: 'auto' }}> */}
-                        <svg width={graphSizeState.width} height={graphSizeState.height} ref={containerRef} className="graph-shadow">
+                        <svg width={graphSizeState.width} height={graphSizeState.height} ref={containerRef} className="graph-shadow p-0 m-0">
                             <LinearGradient id="lg" from={gradientColorStart} to={gradientColorEnd} />
                             <rect className="m-portlet m-portlet--bordered-semi m-card-profile" width={graphSizeState.width} height={graphSizeState.height} rx={14} fill={"url('#lg')"} />
                             <Tree root={data} size={[yMax, xMax]}>
