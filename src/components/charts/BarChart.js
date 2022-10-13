@@ -11,7 +11,7 @@ import dateFormat from 'dateformat';
 
 // Define colors
 const axisColor = "#4d4d4d";
-const contrastColor = "#5E5E5E";
+const contrastColor = "#B9C5E1";
 const contrastColor_Hover = "#8080ff";
 const gradientColorStart = "white";
 const gradientColorEnd = "white";

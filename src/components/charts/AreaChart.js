@@ -16,8 +16,8 @@ const contrastColor = "black";
 const lightContrastColor = "#ff8080";
 const gradientColorStart = "white";
 const gradientColorEnd = "white";
-const graphFillColorStart = "rgb(223, 223, 223, 0.2)";
-const graphFillColorEnd = "rgb(223, 223, 223, 0.6)";
+const graphFillColorStart = "rgb(126, 147, 200, 0.2)";
+const graphFillColorEnd = "rgb(126, 147, 200, 0.6)";
 const graphStrokeColor = "black";
 
 
