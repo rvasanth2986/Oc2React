@@ -4,6 +4,7 @@ import { getRegionsProbesByCustomer } from "../../services/CustomerServcie";
 import { downloadJson } from "../../services/ProbesConfigService"
 import { Grid } from '@material-ui/core';
 import { Toast } from 'devextreme-react/toast';
+import { Popup as CustomPopup, Position, ToolbarItem } from 'devextreme-react/popup';
 import DataGrid, {
     Column,
     Editing,
@@ -16,6 +17,7 @@ import DataGrid, {
     Grouping, ColumnChooser, LoadPanel, Toolbar, TotalItem, Item, PatternRule, RequiredRule
 } from 'devextreme-react/data-grid';
 import 'devextreme-react/text-area';
+import TextArea from "devextreme-react/text-area";
 import ProbesConfigReducer from "../../store/reducers/ProbesConfigReducer";
 import { saveChange, saveProbesChange } from "../../store/actions/CustomerAction";
 
@@ -27,7 +29,8 @@ export default function ProbesRegionConfigComponent() {
     const authstate = useSelector((state) => state.auth);
     const custstate = useSelector((state) => state.cust);
     const [SelectedCustID, setSelectedCustID] = useState(custstate.selectedCustomer);
-
+    const [popupVisible, setpopupVisible] = useState(false);
+    const [JsonText, setJsonText] = useState("");
     const dispatch = useDispatch();
 
     let ProbData = [];
@@ -60,6 +63,8 @@ export default function ProbesRegionConfigComponent() {
         ptypeData.push({ type: "probe" });
         ptypeData.push({ type: "destination" });
         setptypesData(ptypeData);
+        setpopupVisible(false);
+        setJsonText('[{"Note" : "Type/Paste your Json here and tab out to beautify your JSON" }]')
         if (custstate.selectedCustomer && custstate.selectedCustomer !== "" && custstate.regions.length > 0) {
             console.log(custstate.regions);
 
@@ -305,7 +310,7 @@ export default function ProbesRegionConfigComponent() {
     });
 
     const handledownload = useCallback((e) => {
-        e.preventDefault();
+        event.preventDefault();
         downloadJson(authstate.auth.idToken, e.data.probeId, 'GET').then((response) => {
             console.log(response);
             if (response == null) {
@@ -331,11 +336,24 @@ export default function ProbesRegionConfigComponent() {
         });
     });
 
-    const showJsonInfo = useCallback((e) => {
-        e.preventDefault();
+    const showJsonInfo = useCallback((d) => {
+        event.preventDefault();
+        setpopupVisible(true);
 
     });
 
+    const prettyPrint = useCallback((e) => {
+        try {
+            var ugly = e.component._changedValue;
+            var obj = JSON.parse(ugly);
+            var pretty = JSON.stringify(obj, undefined, 4);
+            setJsonText(pretty);
+        }
+        catch (e) {
+
+        }
+
+    });
     return (
 
         <React.Fragment>
@@ -430,6 +448,35 @@ export default function ProbesRegionConfigComponent() {
                         </div>
                     </div>
                     <div class="m-portlet__body">
+                        <CustomPopup
+                            visible={popupVisible}
+                            onHiding={() => setpopupVisible(false)}
+                            dragEnabled={false}
+                            hideOnOutsideClick={false}
+                            showCloseButton={true}
+                            showTitle={true}
+                            title="Json Information"
+                            container=".dx-viewport"
+                            width={700} height={525}
+                        >
+                            <Position
+                                at="center"
+                            //my="center"
+                            // of={this.state.positionOf}
+                            />
+                            <TextArea
+                                id="txtprobesconfigJson"
+                                height={400}
+                                onValueChanged={prettyPrint}
+                                onChange={prettyPrint}
+                                // inputAttr="{Test Data}"
+                                value={JsonText}
+                                label="Config Json"
+                            // maxLength={this.state.maxLength}
+                            // defaultValue={this.state.value}
+                            />
+
+                        </CustomPopup>
                         <DataGrid
                             className={'dx-card-new wide-card'}
                             dataSource={custstate.probes}
@@ -505,13 +552,13 @@ export default function ProbesRegionConfigComponent() {
                         </DataGrid>
                     </div>
                 </div>
-            </Grid> </div>
+            </Grid> </div >
 
-        </React.Fragment>
+        </React.Fragment >
 
     );
-    function InfoRender(d) {
-        return <a href="" onClick={() => showJsonInfo(d)}>Info</a>;
+    function InfoRender(e, d) {
+        return <a href="" onClick={() => showJsonInfo(e, d)}>Info</a>;
     }
     function DownloadRender(d) {
         return <a href="" onClick={() => handledownload(d)}>Download</a>;

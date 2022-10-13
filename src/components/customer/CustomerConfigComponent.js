@@ -15,7 +15,7 @@ import DataGrid, {
 import 'devextreme-react/text-area';
 import { Toast } from 'devextreme-react/toast';
 import ProbesConfigReducer from "../../store/reducers/ProbesConfigReducer";
-import { saveChange, saveProbesChange, addCustomer } from "../../store/actions/CustomerAction";
+import { saveChange, saveProbesChange, CustAction } from "../../store/actions/CustomerAction";
 import { customerconfig } from "../../pages";
 const notesEditorOptions = { height: 50 };
 
@@ -109,7 +109,7 @@ export default function CustomerConfigComponent() {
                     "customerName": e.changes[0].data.customerName,
                     "customerEmail": e.changes[0].data.customerEmail
                 };
-                addCustomer(dispatch, e.changes[0], insertdata, authstate.auth.idToken).then((response) => {
+                CustAction(dispatch, e.changes[0], insertdata, authstate.auth.idToken).then((response) => {
                     console.log(response);
                     notify("success", "Customer added successfully!...")
                     e.promise = true;
@@ -122,7 +122,7 @@ export default function CustomerConfigComponent() {
                     "customerName": e.changes[0].data.customerName == undefined ? e.changes[0].key.customerName : e.changes[0].data.customerName,
                     "customerEmail": e.changes[0].data.customerEmail == undefined ? e.changes[0].key.customerEmail : e.changes[0].data.customerEmail
                 };
-                addCustomer(dispatch, e.changes[0], insertdata, authstate.auth.idToken).then((response) => {
+                CustAction(dispatch, e.changes[0], insertdata, authstate.auth.idToken).then((response) => {
                     console.log(response);
                     notify("success", "Customer updated successfully!...")
                     e.promise = true;
@@ -134,12 +134,18 @@ export default function CustomerConfigComponent() {
                     "customerId": e.changes[0].key.customerId,
                 };
                 console.log("delete", deletedata)
-                // saveChange(dispatch, e.changes[0], deletedata, authstate.auth.idToken).then((response) => {
-                //     console.log(response);
-                //     e.promise = true;
-
-                // });
+                CustAction(dispatch, e.changes[0], deletedata, authstate.auth.idToken).then((response) => {
+                    console.log(response);
+                    notify("success", "Customer removed successfully!...")
+                    e.promise = true;
+                    e.component.cancelEditData();
+                });
             }
+        }
+        else {
+            e.promise = true;
+            notify("info", "No changes made!");
+            e.component.cancelEditData();
         }
     });
 
@@ -198,7 +204,7 @@ export default function CustomerConfigComponent() {
                                     onRowValidating={onRowValidating}
                                 >
                                     <Texts addRow="Add New Customer" />
-                                    <Popup title="Add New Customer" showTitle={true} width={700} height={350} />
+                                    <Popup title="Add New Customer" showTitle={true} width={700} height={500} />
                                     <Form>
                                         <Item itemType="group" colCount={2} colSpan={2}>
                                             <Item dataField="customerId" />

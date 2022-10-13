@@ -23,7 +23,8 @@ export const SAVING_CANCEL = 'SAVING_CANCEL';
 export const SET_CHANGES = 'SET_CHANGES';
 export const SET_EDIT_ROW_KEY = 'SET_EDIT_ROW_KEY';
 export const ADD_CUSTOMER = 'ADD_CUSTOMER';
-export const UPDATE_CUSTOMER = 'UPDATE_CUSTOMER'
+export const UPDATE_CUSTOMER = 'UPDATE_CUSTOMER';
+export const DELETE_CUSTOMER = 'DELETE_CUSTOMER';
 export const SET_RESET_STATE = '[customer action] Reset State';
 
 
@@ -191,7 +192,7 @@ async function sendCustomerData(token, change, insertdata) {
       return sendCustomerRequest(token, insertdata, "PUT");
     case 'remove':
       //return sendRequest(`${url}/DeleteOrder`, 'DELETE', { key: change.key });
-      return DeleteRequest(token, insertdata, "DELETE");
+      return sendCustomerRequest(token, insertdata, "DELETE");
     default:
       return null;
   }
@@ -211,7 +212,7 @@ async function sendProbesChange(token, change, insertdata) {
   }
 }
 
-export async function addCustomer(dispatch, change, insertdata, token) {
+export async function CustAction(dispatch, change, insertdata, token) {
   if (change && change.type) {
     let data;
 
@@ -220,14 +221,14 @@ export async function addCustomer(dispatch, change, insertdata, token) {
     try {
       change.data = data;
       if (change.type == "insert") {
-        data = await sendCustomerData(token, change, insertdata, 'POST');
+        data = await sendCustomerData(token, change, insertdata);
         dispatch({
           type: ADD_CUSTOMER,
           payload: insertdata,
         });
       }
       else if (change.type == "update") {
-        data = await sendCustomerData(token, change, insertdata, 'PUT');
+        data = await sendCustomerData(token, change, insertdata);
         dispatch({
           type: UPDATE_CUSTOMER,
           payload: insertdata,
@@ -235,11 +236,11 @@ export async function addCustomer(dispatch, change, insertdata, token) {
         });
       }
       else if (change.type == "remove") {
-        data = await sendProbesChange(token, change, insertdata);
+        data = await sendCustomerData(token, change, insertdata);
         dispatch({
-          type: DELETE_PROBES_SUCCESS,
+          type: DELETE_CUSTOMER,
           payload: {
-            probeId: insertdata.probeId
+            customerId: insertdata.customerId
           },
         });
       }
