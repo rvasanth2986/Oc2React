@@ -12,24 +12,6 @@ export const SAVING_CANCEL = 'SAVING_CANCEL';
 export const SET_CHANGES = 'SET_CHANGES';
 export const SET_EDIT_ROW_KEY = 'SET_EDIT_ROW_KEY';
 
-export async function loadOrders(dispatch) {
-  dispatch({ type: FETCH_PENDING });
-
-  try {
-    const { data } = await sendRequest(`${URL}/Orders?skip=700`);
-
-    dispatch({
-      type: FETCH_SUCCESS,
-      payload: {
-        data,
-      },
-    });
-  } catch (err) {
-    dispatch({ type: FETCH_ERROR });
-    throw err;
-  }
-}
-
 export async function saveChange(dispatch, change) {
   if (change && change.type) {
     let data;
