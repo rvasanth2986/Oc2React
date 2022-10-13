@@ -119,11 +119,11 @@ export default function ProbesRegionConfigComponent() {
             e.isValid = false;
             return;
         }
-        else {
-            e.errorText = ``;
-            e.isValid = true;
-            return;
-        }
+
+
+        e.errorText = ``;
+        e.isValid = true;
+        return;
 
     });
 
@@ -207,8 +207,31 @@ export default function ProbesRegionConfigComponent() {
                     e.isValid = false;
                     return;
                 }
+                if ((e.newData.probeId == undefined) || (e.newData.probeId.length <= 0)) {
+                    e.errorText = `Probes ID missing!`;
+                    e.isValid = false;
+                    return;
+                }
+                if ((e.newData.ptype == undefined) || (e.newData.ptype.length <= 0)) {
+                    e.errorText = `Probe type is missing!`;
+                    e.isValid = false;
+                    return;
+                }
 
             }
+            if (custstate.probes.filter(x => x.probeName == e.newData.probeName).length > 0) {
+                e.errorText = `Probe name already exist! please try different name...`;
+                e.isValid = false;
+                return;
+            }
+            if (custstate.probes.filter(x => x.probeId == e.newData.probeId).length > 0) {
+                e.errorText = `Probe ID already exist! please try different name...`;
+                e.isValid = false;
+                return;
+            }
+
+
+
         }
         if (type == "update") {
             if ((e.newData != undefined)) {
@@ -219,18 +242,16 @@ export default function ProbesRegionConfigComponent() {
                 }
 
             }
-        }
-        if (custstate.probes.filter(x => x.probeId == e.newData.probeId).length > 0) {
-            e.errorText = `Probe ID already exist! please try different name...`;
-            e.isValid = false;
-            return;
+            if ((e.newData.probeName != undefined) && (e.newData.probeName.length > 0)) {
+                if (custstate.probes.filter(x => x.probeName == e.newData.probeName).length > 0) {
+                    e.errorText = `Probe name already exist! please try different name...`;
+                    e.isValid = false;
+                    return;
+                }
+            }
         }
 
-        if (custstate.probes.filter(x => x.probeName == e.newData.probeName).length > 0) {
-            e.errorText = `Probe name already exist! please try different name...`;
-            e.isValid = false;
-            return;
-        }
+
 
         e.errorText = ``;
         e.isValid = true;
@@ -300,6 +321,19 @@ export default function ProbesRegionConfigComponent() {
             e.component.cancelEditData();
         }
     });
+
+    const onEditorPreparing = e => {
+
+        //target data Cells and the dataField
+        if ((e.parentType === "dataRow") && (e.dataField === "ptype" || e.dataField === "probeId")) {
+
+            if (e.row.isNewRow)
+                e.editorOptions.disabled = false; //enabled only when new record
+            else
+                e.editorOptions.disabled = true; //disabled when existing
+
+        }
+    }
 
     const RemoveRegion = useCallback((e) => {
         e.cancel = true;
@@ -485,6 +519,7 @@ export default function ProbesRegionConfigComponent() {
                             columnHidingEnabled={true}
                             onSaving={onSavingProbesConfig}
                             onRowValidating={onRowValidatingProbes}
+                            onEditorPreparing={onEditorPreparing}
                         >
                             <LoadPanel enabled />
                             <Toolbar>
@@ -499,6 +534,7 @@ export default function ProbesRegionConfigComponent() {
                                 showColumnLines={true}
                                 showRowLines={true}
                                 showBorders={true}
+
                                 onRowValidating={onRowValidatingProbes}
                                 rowAlternationEnabled={true}>
                                 <Texts addRow="Add New Probes" />
@@ -513,44 +549,44 @@ export default function ProbesRegionConfigComponent() {
                                         <Item dataField="localIP" />
                                         <Item dataField="natIP" />
 
-                                        {/* <Item dataField="ptype">
+                                        <Item dataField="ptype">
                                             <Lookup dataSource={ptypesData} valueExpr="type" displayExpr="type" ></Lookup>
-                                        </Item> */}
+                                        </Item>
                                     </Item>
                                 </Form>
                             </Editing>
                             <SearchPanel visible={true} />
                             <HeaderFilter visible={true} />
 
-                                    <FilterRow visible={true} />
-          <Column dataField={'probeId'}  caption="Probe ID"  hidingPriority={1} />
-          <Column dataField={'probeName'} caption={'Probe Name'} hidingPriority={0} />
-          <Column dataField={'pregion'} caption={'Region'} hidingPriority={0} >
-                 <Lookup dataSource={custstate.regions} valueExpr="region" displayExpr="region" /> 
-          </Column>
-          <Column cellRender={InfoRender} allowSorting={false} caption ="Details" /> 
-        <Column cellRender={DownloadRender} allowSorting={false} caption ="Config" />
-        <Column dataField="ptype">
-                    <Lookup dataSource={ptypesData} valueExpr="type" displayExpr="type" ></Lookup>
-        </Column>
-        <Column dataField="localIP" caption="localIP" visible={false} >
+                            <FilterRow visible={true} />
+                            <Column dataField={'probeId'} caption="Probe ID" hidingPriority={1} />
+                            <Column dataField={'probeName'} caption={'Probe Name'} hidingPriority={0} />
+                            <Column dataField={'pregion'} caption={'Region'} hidingPriority={0} >
+                                <Lookup dataSource={custstate.regions} valueExpr="region" displayExpr="region" />
+                            </Column>
+                            <Column cellRender={InfoRender} allowSorting={false} caption="Details" />
+                            <Column cellRender={DownloadRender} allowSorting={false} caption="Config" />
+                            <Column dataField="ptype"  >
+                                <Lookup dataSource={ptypesData} valueExpr="type" displayExpr="type" ></Lookup>
+                            </Column>
+                            <Column dataField="localIP" caption="localIP" visible={false} >
 
-    
-        <PatternRule
-            message={'You have entered an invalid Ip Address format!'}
-            pattern={/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/}
-            />
-    
-                </Column>
-        <Column dataField="natIP" caption="natIP" visible={false} >
-        <PatternRule
-            message={'You have entered an invalid Ip Address format!'}
-            pattern={/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/}
-            />
-            </Column>
-            <Summary> <TotalItem column="probeId" summaryType="count" /> </Summary>
-        </DataGrid>
-                </div>
+
+                                <PatternRule
+                                    message={'You have entered an invalid Ip Address format!'}
+                                    pattern={/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/}
+                                />
+
+                            </Column>
+                            <Column dataField="natIP" caption="natIP" visible={false} >
+                                <PatternRule
+                                    message={'You have entered an invalid Ip Address format!'}
+                                    pattern={/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/}
+                                />
+                            </Column>
+                            <Summary> <TotalItem column="probeId" summaryType="count" /> </Summary>
+                        </DataGrid>
+                    </div>
                 </div>
             </Grid> </div >
 

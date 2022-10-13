@@ -56,7 +56,8 @@ export function CustomerReducer(state = initialState, action) {
             updatedarry[pindex].ptype = action.payload.ptype;
             updatedarry[pindex].pregion = action.payload.pregion;
             return Object.assign({}, state, {
-                probes: [...state.probes, updatedarry]
+                //probes: [...state.probes, updatedarry]
+                probes: updatedarry
             });
         case UPDATE_SUCCESS:
             let index = state.regions.findIndex(x => x.region === action.payload.pregion_old);
