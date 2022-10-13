@@ -132,7 +132,7 @@ const useStyles = makeStyles((theme) => ({
 
             <h2 className={'content-block'}>Path Per Probe</h2> 
 
-            <div className={'content-block dx-card-new responsive-paddings-new'}>
+            <div className={'content-block dx-card-new responsive-paddings-new row__fromdate'}>
                  <ProbesTestHeader checkType = "TraceRt" />  
             </div>
 

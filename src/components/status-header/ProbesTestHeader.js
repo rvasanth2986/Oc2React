@@ -273,8 +273,8 @@ const ProbesTestHeader = ({checkType}) => {
                         />
                     </div> */}
 
-                    <div class="col-md-2">
-                    <div class=" dx-fieldset">
+                    <div class="col-md-3">
+                    <div class=" dx-fieldset d-flex align-items-center">
                     <div class="dx-field-label"> From Date :</div>
                     <div class="dx-field-value">
                     <DateBox
@@ -293,7 +293,7 @@ const ProbesTestHeader = ({checkType}) => {
                         /> */}
                     </div>
                     <div class="col-md-2">
-                    <div class="dx-fieldset">
+                    <div class="dx-fieldset d-flex align-items-center">
                     <div class="dx-field-label"> To Date :</div>
                     <div class="dx-field-value">
                     <DateBox
@@ -314,7 +314,7 @@ const ProbesTestHeader = ({checkType}) => {
                                     onValueChanged={maxChangeHandler}
                                 /> */}
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-1">
                         <Button onClick = {submit} variant="contained" color="primary" > Submit </Button>
                         </div>
                 </div>

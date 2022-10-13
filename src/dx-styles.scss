@@ -591,6 +591,13 @@ html, body {
   .m-portlet.m-portlet--rounded-force {
       overflow: hidden
   }
+
+  .row__fromdate  {
+    .path-header {
+      padding: 0 !important;
+    }
+
+  }
   
   @media (max-width:768px) {
       .m-portlet.m-portlet--responsive-mobile .m-portlet__head {
