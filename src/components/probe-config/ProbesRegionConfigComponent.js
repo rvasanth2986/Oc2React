@@ -18,7 +18,6 @@ import DataGrid, {
 } from 'devextreme-react/data-grid';
 import 'devextreme-react/text-area';
 import TextArea from "devextreme-react/text-area";
-import ProbesConfigReducer from "../../store/reducers/ProbesConfigReducer";
 import { saveChange, saveProbesChange } from "../../store/actions/CustomerAction";
 
 const notesEditorOptions = { height: 50 };
@@ -343,9 +342,9 @@ export default function ProbesRegionConfigComponent() {
         e.component.cancelEditData();
     });
 
-    const handledownload = useCallback((e) => {
-        event.preventDefault();
-        downloadJson(authstate.auth.idToken, e.data.probeId, 'GET').then((response) => {
+    const handledownload = useCallback((e, d) => {
+        e.preventDefault();
+        downloadJson(authstate.auth.idToken, d.data.probeId, 'GET').then((response) => {
             console.log(response);
             if (response == null) {
                 response = '{"message": "Unable to fetch data." }';
@@ -370,8 +369,8 @@ export default function ProbesRegionConfigComponent() {
         });
     });
 
-    const showJsonInfo = useCallback((d) => {
-        event.preventDefault();
+    const showJsonInfo = useCallback((e, d) => {
+        e.preventDefault();
         setpopupVisible(true);
 
     });
@@ -593,11 +592,11 @@ export default function ProbesRegionConfigComponent() {
         </React.Fragment >
 
     );
-    function InfoRender(e, d) {
-        return <a href="" onClick={() => showJsonInfo(e, d)}>Info</a>;
+    function InfoRender(d) {
+        return <a href="" onClick={(e) => showJsonInfo(e, d)}>Info</a>;
     }
     function DownloadRender(d) {
-        return <a href="" onClick={() => handledownload(d)}>Download</a>;
+        return <a href="" onClick={(e) => handledownload(e, d)}>Download</a>;
     }
 }
 

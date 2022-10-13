@@ -24,7 +24,7 @@ export default function CustomerConfigComponent() {
     const authstate = useSelector((state) => state.auth);
     const custstate = useSelector((state) => state.cust);
     const dispatch = useDispatch();
-    console.log("Custstate", custstate);
+    // console.log("Custstate", custstate);
 
     const [toastConfig, setToastConfig] = useState({
         isVisible: false,
