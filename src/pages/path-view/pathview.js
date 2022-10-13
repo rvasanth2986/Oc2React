@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
     const dispatch = useDispatch();
 
     const [metricsData, setmetricsData] = useState([]);
-
+    const [showresult, setshowresult] = useState(false);
     const mockDataRequestFilters = {
         sourceProbeId: "5940",
         destinationProbeId: "ddev-vpc-us-west-2",
@@ -64,7 +64,20 @@ const useStyles = makeStyles((theme) => ({
     function changeStateValue(fieldName, newValue) {
         dispatch(DataFilterChange(fieldName, newValue));
     }
+ useEffect(() => {
+     if(path.MatrixData && path.MatrixData.length > 0){
+        for (let destinationData of path.MatrixData) {
+            // If the destinationData only has a flag property called destinationIdWithNoData, then do not include it in the treeData.
+            if (Object.keys(destinationData[0])[0] !== "destinationIdWithNoData") {
+                setshowresult(true);
+            }
+     } 
+     } else {
+        setshowresult(false);
+     }
 
+    
+ }, [path.MatrixData]);
     function submit() {
              dispatch(TraceMatrixReset([]));   // Reset the probe metrics data state.
 
@@ -123,7 +136,7 @@ const useStyles = makeStyles((theme) => ({
                  <ProbesTestHeader checkType = "TraceRt" />  
             </div>
 
-            { path.MatrixData.length !== 0 && <div className={'responsive-paddings-new'}> <Grid item xs={12} style={{ marginTop: '1em' }}>
+            { showresult && <div className={'responsive-paddings-new'}> <Grid item xs={12} style={{ marginTop: '1em' }}>
                 <div className="m-portlet m-portlet--head-sm ">
                 <div class="m-portlet__head">
                     <div class="m-portlet__head-caption">
@@ -148,6 +161,44 @@ const useStyles = makeStyles((theme) => ({
                         <br />
                         <p style={{ display: 'inline-block', whiteSpace: 'pre-wrap' }}> End Date: </p>
                         <Chip label={path.MatrixDataRequestFiltersState.endDate} />
+                    </Grid>
+                </Grid>
+                </div>
+                </div>
+            </Grid> </div> }
+
+            {/* { !showresult && <div className={'responsive-paddings-new'}>
+                    <h4 class="m-portlet__head-text" style={{ fontWeight : '400', fontSize: '16px', textAlign: 'center'}} > No Data </h4>
+                </div>} */}
+
+{ path.MatrixData.length !== 0 && !showresult && <div className={'responsive-paddings-new'}> <Grid item xs={12} style={{ marginTop: '1em' }}>
+                <div className="m-portlet m-portlet--head-sm">
+                <div class="m-portlet__head">
+                    <div class="m-portlet__head-caption">
+                        <div class="m-portlet__head-title">
+                            <h4 class="m-portlet__head-text" style={{ fontWeight : '400', fontSize: '16px'}} > No data available for </h4>
+                        </div>
+                        </div>
+                </div>
+                <div class="m-portlet__body">
+                <Grid container>
+                    {/* <Grid item xs={12} style={{ marginBottom: '1em', marginLeft: '2em' }}>
+                        <p className="header1-style" style={{textAlign: 'left'}}>Showing results for: </p>
+                    </Grid> */}
+                    <Grid item xs={12} style={{ marginBottom: '1em', marginLeft: '2em' }}>
+     
+                        {path.MatrixData.length !== 0 && path.MatrixData.map((dataSet, index) => {
+                       if (Object.keys(dataSet[0])[0] == "destinationIdWithNoData") {
+                        return (
+                            //<div>
+                            <p class="m-badge m-badge--secondary m-badge--wide pade" >{path.MatrixDataRequestFiltersState.sourceProbeIdResults} &#8594; {dataSet[0].destinationIdWithNoData}.</p>
+                            //</div>
+                            
+                            // <Chip key={index} label={dataSet[0].destinationIdWithNoData} /> )
+                        )
+                       }
+                        })}
+
                     </Grid>
                 </Grid>
                 </div>

@@ -16,8 +16,8 @@ const contrastColor = "black";
 const lightContrastColor = "#ff8080";
 const gradientColorStart = "white";
 const gradientColorEnd = "white";
-const graphFillColorStart = "rgb(223, 223, 223, 0.2)";
-const graphFillColorEnd = "rgb(223, 223, 223, 0.6)";
+const graphFillColorStart = "rgb(126, 147, 200, 0.2)";
+const graphFillColorEnd = "rgb(126, 147, 200, 0.6)";
 const graphStrokeColor = "black";
 
 
@@ -181,9 +181,6 @@ const AreaChart = ({ metricsData, sourceProbeId, destinationId }) => {
     return (
         <>
                                   <div className="m-portlet m-portlet--head-sm">
-                                    {/* <header className="px-5 py-4 border-b border-slate-100">
-                                        <h2 className="font-semibold text-slate-800">Direct VS Indirect</h2>
-                                    </header> */}
                                     <div class="m-portlet__head">
                                     <div class="m-portlet__head-caption">
                                         <div class="m-portlet__head-title">
@@ -193,10 +190,6 @@ const AreaChart = ({ metricsData, sourceProbeId, destinationId }) => {
                                         <div class="m-portlet__head-tools">
                                         <Legend scale={areaGraphLegendScale} direction="row" labelMargin="0 15px 0 0" style={{ fontFamily: 'Corbel Light', fontWeight: 'bold', display: 'inline-block' }} />
                                         </div>
-                                        {/* <div style={{ marginLeft: '2em' }}>
-                <p className="header1-style" style={{ textAlign: 'left', display: 'inline-block', whiteSpace: 'pre-wrap' }}>{sourceProbeId} &#8594; {destinationId}    </p>
-                <Legend scale={areaGraphLegendScale} direction="row" labelMargin="0 15px 0 0" style={{ fontFamily: 'Corbel Light', fontWeight: 'bold', display: 'inline-block' }} />
-                </div> */}
                                     </div>
                                     <div class="m-portlet__body">
 

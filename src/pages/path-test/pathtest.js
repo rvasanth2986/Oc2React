@@ -53,7 +53,7 @@ export default () => {
     const authstate = useSelector((state) => state.auth);
     const custstate = useSelector((state) => state.cust);
     const path = useSelector((state) => state.path);
-
+    const [showresult, setshowresult] = useState(false);
     const dispatch = useDispatch();
 
     const [metricsData, setmetricsData] = useState([]);
@@ -84,7 +84,20 @@ export default () => {
     function changeStateValue(fieldName, newValue) {
         dispatch(DataFilterChange(fieldName, newValue));
     }
-
+    useEffect(() => {
+        if(path.MatrixData && path.MatrixData.length > 0){
+           for (let destinationData of path.MatrixData) {
+               // If the destinationData only has a flag property called destinationIdWithNoData, then do not include it in the treeData.
+               if (Object.keys(destinationData[0])[0] !== "destinationIdWithNoData") {
+                   setshowresult(true);
+               }
+        } 
+        } else {
+           setshowresult(false);
+        }
+   
+       
+    }, [path.MatrixData]);
     function submit() {
              dispatch(TraceMatrixReset([]));   // Reset the probe metrics data state.
 
@@ -143,7 +156,7 @@ export default () => {
                  <ProbesTestHeader checkType = "Ping" />  
             </div>
 
-            { path.MatrixData.length !== 0 && <div className={'responsive-paddings-new'}> <Grid item xs={12} style={{ marginTop: '1em' }}>
+            { showresult && <div className={'responsive-paddings-new'}> <Grid item xs={12} style={{ marginTop: '1em' }}>
                 <div className="m-portlet m-portlet--head-sm ">
                 <div class="m-portlet__head">
                     <div class="m-portlet__head-caption">
@@ -173,7 +186,9 @@ export default () => {
                 </div>
                 </div>
             </Grid> </div> }
-
+            {/* { !showresult && <div className={'responsive-paddings-new'}>
+                    <h4 class="m-portlet__head-text" style={{ fontWeight : '400', fontSize: '16px', textAlign: 'center'}} > No Data </h4>
+                </div>} */}
                 {/* { path.MatrixData.length !== 0 && <Grid item xs={12} style={{ marginTop: '1em' }}>
                 <div className="m-portlet m-portlet--head-sm">
                 <div class="m-portlet__head">
@@ -205,7 +220,7 @@ export default () => {
                 </div>
             </Grid> } */}
 
-            { path.MatrixData.length !== 0 && <div className={'responsive-paddings-new'}> <Grid item xs={12} style={{ marginTop: '1em' }}>
+            { path.MatrixData.length !== 0 && !showresult && <div className={'responsive-paddings-new'}> <Grid item xs={12} style={{ marginTop: '1em' }}>
                 <div className="m-portlet m-portlet--head-sm">
                 <div class="m-portlet__head">
                     <div class="m-portlet__head-caption">

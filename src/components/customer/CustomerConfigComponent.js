@@ -192,51 +192,50 @@ export default function CustomerConfigComponent() {
                                 <Paging enabled={true} defaultPageSize={10} />
                                 <Editing
 
-                                    mode="popup"
-                                    allowUpdating={true}
-                                    allowAdding={true}
-                                    allowDeleting={true}
-                                    showColumnLines={true}
-                                    showRowLines={true}
-                                    showBorders={true}
-                                    rowAlternationEnabled={true}
-                                    onRowRemoving={RemoveRegion}
-                                    onRowValidating={onRowValidating}
-                                >
-                                    <Texts addRow="Add New Customer" />
-                                    <Popup title="Add New Customer" showTitle={true} width={700} height={500} />
-                                    <Form>
-                                        <Item itemType="group" colCount={2} colSpan={2}>
-                                            <Item dataField="customerId" />
-                                            <Item dataField="customerName" />
-                                            <Item dataField="customerEmail" />
-
-                                        </Item>
-                                    </Form>
-                                </Editing>
-                                <SearchPanel visible={true} />
-                                <HeaderFilter visible={true} />
-                                <FilterRow visible={true} />
-                                <Column dataField={'customerId'} caption="Customer Id" hidingPriority={1} />
-                                <Column
-                                    dataField={'customerName'}
-                                    caption={'Customer Name'}
-                                    hidingPriority={0}
-                                />
-                                <Column
-                                    dataField={'customerEmail'}
-                                    caption={'Customer Email'}
-                                    hidingPriority={0}
-                                />
-                                <Summary>
-                                    <TotalItem
-                                        column="customerId"
-                                        summaryType="count" />
-                                </Summary>
-                            </DataGrid>
-                        </div>
+                                mode="popup"
+                                allowUpdating={true}
+                                allowAdding={true}
+                                allowDeleting={true}
+                                showColumnLines={true}
+                                showRowLines={true}
+                                showBorders={true}
+                                rowAlternationEnabled={true}
+                                onRowRemoving={RemoveRegion}
+                            >
+                                <Texts addRow="Add New Customer" />
+                                <Popup title="Add New Customer" showTitle={true} width={700} height={350} />
+                                <Form>
+                                    <Item itemType="group" colCount={2} colSpan={2}>
+                                        <Item dataField="customerId"  />
+                                        <Item dataField="customerName" />
+                                        <Item dataField="customerEmail" />
+                                        
+                                    </Item>
+                                </Form>
+                            </Editing>
+                            <SearchPanel visible={true} />
+                            <HeaderFilter visible={true} />
+                            <FilterRow visible={true} />
+                            <Column dataField={'customerId'} caption="Customer Id" hidingPriority={1} />
+                            <Column
+                                dataField={'customerName'}
+                                caption={'Customer Name'}
+                                hidingPriority={0}
+                            />
+                             <Column
+                                dataField={'customerEmail'}
+                                caption={'Customer Email'}
+                                hidingPriority={0}
+                            />
+                            <Summary>
+                                <TotalItem
+                                    column="customerId"
+                                    summaryType="count" />
+                            </Summary>
+                        </DataGrid>
                     </div>
-                </Grid>
+                </div>
+            </Grid> 
             </div>
         </React.Fragment>
     );

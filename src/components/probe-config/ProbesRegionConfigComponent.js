@@ -522,35 +522,35 @@ export default function ProbesRegionConfigComponent() {
                             <SearchPanel visible={true} />
                             <HeaderFilter visible={true} />
 
-                            <FilterRow visible={true} />
-                            <Column dataField={'probeId'} caption="Probe ID" hidingPriority={1} />
-                            <Column dataField={'probeName'} caption={'Probe Name'} hidingPriority={0} />
-                            <Column dataField={'pregion'} caption={'Region'} hidingPriority={0} >
-                                <Lookup dataSource={custstate.regions} valueExpr="region" displayExpr="region" />
-                            </Column>
-                            <Column cellRender={InfoRender} allowSorting={false} caption="Details" />
-                            <Column cellRender={DownloadRender} allowSorting={false} caption="Config" />
-                            <Column dataField="ptype">
-                                <Lookup dataSource={ptypesData} valueExpr="type" displayExpr="type" ></Lookup>
-                            </Column>
-                            <Column dataField="localIP" caption="localIP" visible={false} >
+                                    <FilterRow visible={true} />
+          <Column dataField={'probeId'}  caption="Probe ID"  hidingPriority={1} />
+          <Column dataField={'probeName'} caption={'Probe Name'} hidingPriority={0} />
+          <Column dataField={'pregion'} caption={'Region'} hidingPriority={0} >
+                 <Lookup dataSource={custstate.regions} valueExpr="region" displayExpr="region" /> 
+          </Column>
+          <Column cellRender={InfoRender} allowSorting={false} caption ="Details" /> 
+        <Column cellRender={DownloadRender} allowSorting={false} caption ="Config" />
+        <Column dataField="ptype">
+                    <Lookup dataSource={ptypesData} valueExpr="type" displayExpr="type" ></Lookup>
+        </Column>
+        <Column dataField="localIP" caption="localIP" visible={false} >
 
-
-                                <PatternRule
-                                    message={'You have entered an invalid Ip Address format!'}
-                                    pattern={/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/}
-                                />
-
-                            </Column>
-                            <Column dataField="natIP" caption="natIP" visible={false} >
-                                <PatternRule
-                                    message={'You have entered an invalid Ip Address format!'}
-                                    pattern={/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/}
-                                />
-                            </Column>
-                            <Summary> <TotalItem column="probeId" summaryType="count" /> </Summary>
-                        </DataGrid>
-                    </div>
+    
+        <PatternRule
+            message={'You have entered an invalid Ip Address format!'}
+            pattern={/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/}
+            />
+    
+                </Column>
+        <Column dataField="natIP" caption="natIP" visible={false} >
+        <PatternRule
+            message={'You have entered an invalid Ip Address format!'}
+            pattern={/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/}
+            />
+            </Column>
+            <Summary> <TotalItem column="probeId" summaryType="count" /> </Summary>
+        </DataGrid>
+                </div>
                 </div>
             </Grid> </div >
 
