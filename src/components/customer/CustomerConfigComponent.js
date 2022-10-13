@@ -149,7 +149,7 @@ export default function CustomerConfigComponent() {    const authstate = useSele
                             <Column
                                 dataField={'customerName'}
                                 caption={'Customer Name'}
-                                hidingPriority={0}
+                                hidingPriority={2}
                             />
                              <Column
                                 dataField={'customerEmail'}

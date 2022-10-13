@@ -17,24 +17,6 @@ const DiagramNode = ({ node, index, hoverId, setHoverId, showTooltip, hideToolti
 
     if (isRoot) return <DiagramRootNode node={node} index={index} hoverId={hoverId} setHoverId={setHoverId} />;
 
-    // if there was packet loss at the hop (> 0), then the fill and outline (stroke) will be a shade of red.
-    // if (node.data.hop_loss > 0) {
-    //     // The larger the % loss, the less the green and blue value meaning the red color will be more vibrant, visually indicating more loss.
-    //     const greenBlueValue = 200 - Math.ceil(node.data.hop_loss) * 2;
-    //     // nodeFill = `rgb(255, ${greenBlueValue}, ${greenBlueValue})`;
-    //     // nodeFill_Hover = `rgb(255, ${greenBlueValue + 20}, ${greenBlueValue + 20})`;
-    //     nodeFill = "#EBEBEB";
-    //     nodeFill_Hover = "#A7B99A";
-    //     nodeStroke = "red";
-    // }
-    // // Otherwise, the node will be gray.
-    // else {
-    //   //  nodeFill = "#36BF54"; //"#367855";
-    //     nodeFill = "#EBEBEB"; //"#36BF54";
-    //     nodeFill_Hover = "#A7B99A";
-    //     nodeStroke = "#4d4d4d";
-    // }
-
     if (node.data.hop_loss > 0) {
         // The larger the % loss, the less the green and blue value meaning the red color will be more vibrant, visually indicating more loss.
         const greenBlueValue = 200 - Math.ceil(node.data.hop_loss) * 2;

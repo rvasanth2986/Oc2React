@@ -301,11 +301,11 @@ const PathTraceDiagram = ({ sourceProbeId, metricsData }) => {
 
         <React.Fragment>
             {traceRouteData.children.length > 0 &&
-                <div>
+                <div className={'responsive-paddings-new'}>
                     <div className={'row'}>
                         <div class="col-md-6">
                             <div className={'row'}>
-                                <div className={'responsive-paddings'}>
+                                <div className={'responsive-paddings-new'}>
                                     <div className="m-portlet m-portlet--head-sm ">
                                         <div class="m-portlet__head">
                                             <div class="m-portlet__head-caption">
@@ -357,19 +357,12 @@ const PathTraceDiagram = ({ sourceProbeId, metricsData }) => {
                                         </div>
                                         <div class="m-portlet__body">
                                             <Grid container>
-                                                {/* <Grid item xs={12} style={{ marginBottom: '1em', marginLeft: '2em' }}>
-                        <p className="header1-style" style={{textAlign: 'left'}}>Showing results for: </p>
-                    </Grid> */}
                                                 <Grid item xs={12} style={{ marginBottom: '1em', marginLeft: '2em' }}>
 
                                                     {pathstate.MatrixDataSetDisplay.destinationIdsWithNoData.length > 0 && pathstate.MatrixDataSetDisplay.destinationIdsWithNoData.map((dataSet, index) => {
 
                                                         return (
-                                                            //<div>
                                                             <p class="m-badge m-badge--secondary m-badge--wide pade" >{pathstate.MatrixDataRequestFiltersState.sourceProbeIdResults} &#8594; {dataSet}</p>
-                                                            //</div>
-
-                                                            // <Chip key={index} label={dataSet[0].destinationIdWithNoData} /> )
                                                         )
 
                                                     })}
@@ -383,7 +376,7 @@ const PathTraceDiagram = ({ sourceProbeId, metricsData }) => {
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div className={'content-block dx-card-new responsive-paddings'}>
+                            <div className={'content-block dx-card-new responsive-paddings-new'}>
                                 <DataGrid
                                     className={'dx-card-new wide-card'}
                                     dataSource={pathstate.MatrixDataSetDisplay.gridData}
@@ -392,16 +385,13 @@ const PathTraceDiagram = ({ sourceProbeId, metricsData }) => {
                                     columnHidingEnabled={true}
                                 >
                                     <Paging enabled={true} defaultPageSize={5} />
-                                    {/* <Pager showPageSizeSelector={true} showInfo={true} /> */}
-
                                     <Column dataField={'items'} caption="TraceRoute Data" cellRender={probesRender} hidingPriority={0} />
 
                                 </DataGrid>
                             </div>
                         </div>
                     </div>
-                    <div className={'responsive-paddings'} style={{ overflowX: 'auto' }}>
-                        {/* <Grid style={{ overflowX: 'auto' }}> */}
+                    <div className={'responsive-paddings-new'} style={{ overflowX: 'auto' }}>
                         <svg width={graphSizeState.width} height={graphSizeState.height} ref={containerRef} className="graph-shadow">
                             <LinearGradient id="lg" from={gradientColorStart} to={gradientColorEnd} />
                             <rect className="m-portlet m-portlet--bordered-semi m-card-profile" width={graphSizeState.width} height={graphSizeState.height} rx={14} fill={"url('#lg')"} />
@@ -443,125 +433,18 @@ const PathTraceDiagram = ({ sourceProbeId, metricsData }) => {
                                     <div>
                                         <p style={{ margin: 0 }}><strong>Hop #{tooltipData.name}</strong></p>
                                         <p style={{ marginBottom: 0, marginTop: -10 }}>________________</p>
-                                        {/* {tooltipData.hop_IPs && <p className="tooltip-graph-stats"><strong>Hop IPs: </strong>{tooltipData.hop_IPs.join(", ")}</p>} */}
+                                       
                                         {tooltipData.hop_IPs && <p className="tooltip-graph-stats"><strong>Hop IPs: </strong>{tooltipData.hop_IPs}</p>}
                                         {tooltipData.hop_rtt >= 0 && <p className="tooltip-graph-stats"><strong>Reply Latency: </strong>{tooltipData.hop_rtt} ms</p>}
-                                        {tooltipData.hop_loss >= 0 && <p className="tooltip-graph-stats" style={{ color: tooltipData.hop_loss > 0 ? tooltipTitleTextColor_NodeLatency : "lightgrey" }}><strong>Loss Detected: </strong>{tooltipData.hop_loss}%</p>}
+                                        {tooltipData.hop_loss >= 0 && <p className="tooltip-graph-stats" style={{ color: tooltipData.hop_loss > 0 ? tooltipTitleTextColor_NodeLatency : "lightgrey" }}><strong>Loss Detected: </strong>{tooltipData.hop_loss * 100}%</p>}
                                     </div>
                                 </TooltipInPortal>
                             )}
                         </svg >
-                        {/* </Grid> */}
                     </div>
                 </div>
             }
         </React.Fragment>
-        // <Grid container alignItems="center">
-        //     {traceRouteData.children.length > 0 &&
-        //         <>
-        //             <Grid item xs={12} style={{ marginLeft: '2em', marginBottom: '1em' }}>
-        //                 <p className="header2-style" style={{ display: 'inline-block', whiteSpace: 'pre-wrap', fontWeight: 'bold' }}>Data Set Selector:   </p>
-        //                 <Paper>
-        //                 <Slider
-        //                     step={1}
-        //                     //marks
-        //                     min={0}
-        //                     max={pathstate.MatrixDataSetDisplay.maxDataSetNum}
-        //                     style={{ maxWidth: 300, padding: 0, paddingBottom: 4 }}
-        //                     value={pathstate.MatrixDataSetDisplay.index}
-        //                     onValueChanged={(e) => changeStateValue("index", e.value)}>
-        //                     <Tooltip enabled={true} showMode="always" position="bottom" format={format} />
-        //                     </Slider>
-        //                     </Paper>
-        //                 /> */}
-        //             </Grid>
-
-        //             <Grid item xs={12} style={{ marginLeft: '2em' }}>
-        //                    <DataGrid 
-        //                         dataSource={pathstate.MatrixDataSetDisplay.gridData}
-        //                         showBorders={true}
-        //                         >
-        //                         <Paging enabled={true} defaultPageSize={10}  />
-        //                         <Column dataField="items" caption="TraceRoute Data" cellRender={probesRender}/>
-        //                        </DataGrid>
-        //             </Grid>
-
-        //             <Grid style={{ overflowX: 'auto' }}>
-        //                 <svg width={graphSizeState.width} height={graphSizeState.height} ref={containerRef} className="graph-shadow">
-        //                     <LinearGradient id="lg" from={gradientColorStart} to={gradientColorEnd} />
-        //                     <rect className = "m-portlet m-portlet--bordered-semi m-card-profile" width={graphSizeState.width} height={graphSizeState.height} rx={14} fill={"url('#lg')"} />
-        //                     <Tree root={data} size={[yMax, xMax]}>
-        //                         {tree => (
-        //                             <Group top={graphSizeState.margin.top} left={graphSizeState.margin.left}>
-        //                                 {/* There's two parts: links and nodes. They are independent of each other. */}
-        //                                 {tree.links().map((link, i) => {
-        //                                     // Change the horizontal position of the root node so that it is farther from the first child node(s).
-        //                                     if (i < metricsData.length) {
-        //                                         link.source.y = link.source.y - 20;
-        //                                     }
-
-        //                                     // Creates link between two nodes (it is the line)
-        //                                     return <LinkHorizontal
-        //                                         key={`link-${i}`}
-        //                                         data={link}
-        //                                         stroke={linkColor}
-        //                                         strokeWidth="1"
-        //                                         fill="none"
-        //                                     />
-        //                                 })}
-        //                                 {tree.descendants().map((node, i) => {
-        //                                     // Creates each node.
-        //                                     return <DiagramNode
-        //                                         key={`node-${i}`}
-        //                                         node={node}
-        //                                         hoverId={hoverId}
-        //                                         setHoverId={setHoverId}
-        //                                         index={i}
-        //                                         showTooltip={showTooltip}
-        //                                         hideTooltip={hideTooltip}
-        //                                     />
-        //                                 })}
-        //                             </Group>
-        //                         )}
-        //                     </Tree>
-        //                     {tooltipOpen && tooltipData && (
-        //                         <TooltipInPortal top={tooltipTop} left={tooltipLeft} style={tooltipStyles}>
-        //                             <div style={{ color: tooltipData.hop_loss > 0 ? tooltipTitleTextColor_NodeLatency : tooltipTitleTextColor }}>
-        //                                 <strong>{sourceProbeId} &#8594; {tooltipData.destinationId} 
-        //                                 {/* | {dateFormat(tooltipData.time, "UTC:mmm d, yyyy")} @ {dateFormat(tooltipData.time, "UTC:HH:MM:ss")} */}
-        //                                 </strong>
-        //                             </div>
-        //                             <div>
-        //                                 <p style={{ margin: 0 }}><strong>Hop #{tooltipData.name}</strong></p>
-        //                                 <p style={{ marginBottom: 0, marginTop: -10 }}>________________</p>
-        //                                 {tooltipData.hop_IPs && <p className="tooltip-graph-stats"><strong>Hop IPs: </strong>{tooltipData.hop_IPs.join(", ")}</p>}
-        //                                 {tooltipData.hop_rtt >= 0 && <p className="tooltip-graph-stats"><strong>Reply Latency: </strong>{tooltipData.hop_rtt} ms</p>}
-        //                                 {tooltipData.hop_loss >= 0 && <p className="tooltip-graph-stats" style={{ color: tooltipData.hop_loss > 0 ? tooltipTitleTextColor_NodeLatency : "lightgrey" }}><strong>Loss Detected: </strong>{tooltipData.hop_loss}%</p>}
-        //                             </div>
-        //                         </TooltipInPortal>
-        //                     )}
-        //                 </svg >
-        //             </Grid>
-        //         </>
-        //     }
-        //     {/* Display all destinations that had no data. */}
-        //     {pathstate.MatrixDataSetDisplay.destinationIdsWithNoData.length > 0 &&
-        //         <Grid item xs={12}>
-        //             <p className="header2-style" style={{ textAlign: 'left', marginLeft: '1.5em', fontWeight: 'bold', display: 'inline-block', whiteSpace: 'pre-wrap' }}>
-        //                 No data available for </p>
-        //             <p className="header1-style" style={{ display: 'inline-block', whiteSpace: 'pre-wrap' }}>{sourceProbeId}</p>
-        //             <p className="header2-style" style={{ display: 'inline-block', fontWeight: 'bold', textAlign: 'left', whiteSpace: 'pre-wrap' }}> to </p>
-
-        //             {pathstate.MatrixDataSetDisplay.destinationIdsWithNoData.map((destinationId, index) => (
-        //                 <p key={index} className="header1-style" style={{ display: 'inline-block', whiteSpace: 'pre-wrap' }}>{destinationId}{index !== pathstate.MatrixDataSetDisplay.destinationIdsWithNoData.length - 1 ? ', ' : '.'}</p>
-        //             ))}
-
-        //             <br />
-        //             <br />
-
-        //         </Grid>
-        //     }
-        // </Grid>
     );
 }
 

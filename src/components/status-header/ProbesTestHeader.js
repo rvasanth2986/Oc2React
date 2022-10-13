@@ -34,6 +34,7 @@ const ProbesTestHeader = ({checkType}) => {
     const [SelectedDestProbes,setSelectedDestProbes]= useState([]);
     const[startValue,setstartValue]=useState("");
     const[endValue,setendValue]=useState("");
+    const[currentValue,setcurrentValue]=useState("");
     const dispatch = useDispatch();
 
     //const [value, setValue] = React.useState<DateRange<Date>>([null, null]);
@@ -50,6 +51,7 @@ const ProbesTestHeader = ({checkType}) => {
         dispatch(TraceMatrixReset([])); 
         setstartValue(new Date());
         setendValue(new Date());
+        setcurrentValue(new Date());
         // this.minChangeHandler = this.minChangeHandler.bind(this);
         // this.maxChangeHandler = this.maxChangeHandler.bind(this);
         
@@ -297,7 +299,7 @@ const ProbesTestHeader = ({checkType}) => {
                     <DateBox
                                     value={endValue}
                                     width={400}
-                                    // max={startValue}
+                                    max={currentValue}
                                     min={startValue}
                                     onValueChanged={maxChangeHandler}
                                 />

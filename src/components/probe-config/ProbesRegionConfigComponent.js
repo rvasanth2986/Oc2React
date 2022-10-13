@@ -371,17 +371,17 @@ export default function ProbesRegionConfigComponent (){
                                     <HeaderFilter visible={true} />
 
                                     <FilterRow visible={true} />
-          <Column dataField={'probeId'}  caption="Probe ID"  hidingPriority={1} />
-          <Column dataField={'probeName'} caption={'Probe Name'} hidingPriority={0} />
-          <Column dataField={'pregion'} caption={'Region'} hidingPriority={0} >
+          <Column dataField={'probeId'}  caption="Probe ID"  hidingPriority={5} />
+          <Column dataField={'probeName'} caption={'Probe Name'} hidingPriority={7} />
+          <Column dataField={'pregion'} caption={'Region'} hidingPriority={6} >
                  <Lookup dataSource={custstate.regions} valueExpr="region" displayExpr="region" /> 
           </Column>
-          <Column cellRender={InfoRender} allowSorting={false} caption ="Details" /> 
-        <Column cellRender={DownloadRender} allowSorting={false} caption ="Config" />
-        <Column dataField="ptype">
+          <Column cellRender={InfoRender} allowSorting={false} caption ="Details" hidingPriority={4} /> 
+        <Column cellRender={DownloadRender} allowSorting={false} caption ="Config" hidingPriority={3} />
+        <Column dataField="ptype" hidingPriority={2}>
                     <Lookup dataSource={ptypesData} valueExpr="type" displayExpr="type" ></Lookup>
         </Column>
-        <Column dataField="localIP" caption="localIP" visible={false} >
+        <Column dataField="localIP" caption="localIP" visible={false} hidingPriority={1} >
 
     
         <PatternRule
@@ -390,7 +390,7 @@ export default function ProbesRegionConfigComponent (){
             />
     
                 </Column>
-        <Column dataField="natIP" caption="natIP" visible={false} >
+        <Column dataField="natIP" caption="natIP" visible={false} hidingPriority={0} >
         <PatternRule
             message={'You have entered an invalid Ip Address format!'}
             pattern={/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/}
