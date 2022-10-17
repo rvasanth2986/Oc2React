@@ -122,6 +122,7 @@ export default function CustomerConfigComponent() {
                     "customerName": e.changes[0].data.customerName == undefined ? e.changes[0].key.customerName : e.changes[0].data.customerName,
                     "customerEmail": e.changes[0].data.customerEmail == undefined ? e.changes[0].key.customerEmail : e.changes[0].data.customerEmail
                 };
+                // console.log(insertdata);
                 CustAction(dispatch, e.changes[0], insertdata, authstate.auth.idToken).then((response) => {
                     console.log(response);
                     notify("success", "Customer updated successfully!...")
