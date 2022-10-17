@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { connect, useDispatch, useSelector } from "react-redux";
 import { getRegionsProbesByCustomer } from "../../services/CustomerServcie";
 import { downloadJson } from "../../services/ProbesConfigService"
-import { Grid } from '@material-ui/core';
+import { Button, Grid } from '@material-ui/core';
 import { Toast } from 'devextreme-react/toast';
 import { Popup as CustomPopup, Position, ToolbarItem } from 'devextreme-react/popup';
 import DataGrid, {
@@ -29,6 +29,7 @@ export default function ProbesRegionConfigComponent() {
     const custstate = useSelector((state) => state.cust);
     const [SelectedCustID, setSelectedCustID] = useState(custstate.selectedCustomer);
     const [popupVisible, setpopupVisible] = useState(false);
+    const [title, SetTitle] = useState("");
     const [JsonText, setJsonText] = useState("");
     const dispatch = useDispatch();
 
@@ -63,6 +64,7 @@ export default function ProbesRegionConfigComponent() {
         ptypeData.push({ type: "destination" });
         setptypesData(ptypeData);
         setpopupVisible(false);
+        SetTitle("Probes Config Json Information")
         setJsonText('[{"Note" : "Type/Paste your Json here and tab out to beautify your JSON" }]')
         if (custstate.selectedCustomer && custstate.selectedCustomer !== "" && custstate.regions.length > 0) {
             console.log(custstate.regions);
@@ -349,9 +351,10 @@ export default function ProbesRegionConfigComponent() {
             if (response == null) {
                 response = '{"message": "Unable to fetch data." }';
             }
+            //console.log(d.data.probeId);
             let myData = response;
             // create file in browser
-            const fileName = "my-file";
+            const fileName = d.data.probeName;
             const json = JSON.stringify(myData, null, 2);
             const blob = new Blob([json], { type: "application/json" });
             const href = URL.createObjectURL(blob);
@@ -371,19 +374,37 @@ export default function ProbesRegionConfigComponent() {
 
     const showJsonInfo = useCallback((e, d) => {
         e.preventDefault();
-        setpopupVisible(true);
+
+        downloadJson(authstate.auth.idToken, d.data.probeId, 'GET').then((response) => {
+            console.log(response);
+
+            if (response == null) {
+                response = '{"message": "Unable to fetch data." }';
+            }
+            var unformattedjson = JSON.stringify(response);
+            var obj = JSON.parse(unformattedjson);
+            var formattedJsonString = JSON.stringify(obj, undefined, 4);
+            SetTitle("Probes Config Json Information : " + d.data.probeName);
+            setJsonText(formattedJsonString);
+            setpopupVisible(true);
+
+            //prettyPrint(e);
+        });
 
     });
 
     const prettyPrint = useCallback((e) => {
         try {
+            e.preventDefault();
             var ugly = e.component._changedValue;
             var obj = JSON.parse(ugly);
             var pretty = JSON.stringify(obj, undefined, 4);
-            setJsonText(pretty);
-        }
-        catch (e) {
 
+            setJsonText(pretty);
+
+        }
+        catch (ex) {
+            console.log(ex.message);
         }
 
     });
@@ -488,9 +509,9 @@ export default function ProbesRegionConfigComponent() {
                             hideOnOutsideClick={false}
                             showCloseButton={true}
                             showTitle={true}
-                            title="Json Information"
+                            title={title}
                             container=".dx-viewport"
-                            width={700} height={525}
+                            width={750} height={625}
                         >
                             <Position
                                 at="center"
@@ -500,14 +521,14 @@ export default function ProbesRegionConfigComponent() {
                             <TextArea
                                 id="txtprobesconfigJson"
                                 height={400}
-                                onValueChanged={prettyPrint}
-                                onChange={prettyPrint}
                                 // inputAttr="{Test Data}"
+                                // InputProps={{ style: { fontSize: 40 } }}
                                 value={JsonText}
-                                label="Config Json"
+                            //label="Config Json"
                             // maxLength={this.state.maxLength}
                             // defaultValue={this.state.value}
                             />
+                            <Button color="primary" variant="contained" style={{ marginTop: '1%' }}>SAVE</Button>
 
                         </CustomPopup>
                         <DataGrid
