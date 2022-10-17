@@ -84,8 +84,13 @@ export function CustomerReducer(state = initialState, action) {
                 customer: [...state.customer, action.payload]
             });
         case UPDATE_CUSTOMER:
+            let cIndex = state.customer.findIndex(x => x.customerId === action.payload.customerId);
+            var UpdatedCusArry = [...state.customer];
+            UpdatedCusArry[cIndex].customerId = action.payload.customerId;
+            UpdatedCusArry[cIndex].customerName = action.payload.customerName;
+            UpdatedCusArry[cIndex].customerEmail = action.payload.customerEmail;
             return Object.assign({}, state, {
-                customer: [...state.customer, action.payload]
+                customer: UpdatedCusArry
             });
         case DELETE_CUSTOMER:
             let Cusindex = state.customer.findIndex(x => x.customerId === action.payload.customerId);
