@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { connect, useDispatch, useSelector } from "react-redux";
 import { getRegionsProbesByCustomer } from "../../services/CustomerServcie";
-import { downloadJson } from "../../services/ProbesConfigService"
+import { downloadJson, SaveConfigJson } from "../../services/ProbesConfigService"
 import { Button, Grid } from '@material-ui/core';
 import { Toast } from 'devextreme-react/toast';
 import { Popup as CustomPopup, Position, ToolbarItem } from 'devextreme-react/popup';
@@ -30,6 +30,7 @@ export default function ProbesRegionConfigComponent() {
     const [SelectedCustID, setSelectedCustID] = useState(custstate.selectedCustomer);
     const [popupVisible, setpopupVisible] = useState(false);
     const [title, SetTitle] = useState("");
+    const [ButtonText, SetButtonText] = useState("Save");
     const [JsonText, setJsonText] = useState("");
     const dispatch = useDispatch();
 
@@ -64,6 +65,7 @@ export default function ProbesRegionConfigComponent() {
         ptypeData.push({ type: "destination" });
         setptypesData(ptypeData);
         setpopupVisible(false);
+        SetButtonText("Save");
         SetTitle("Probes Config Json Information")
         setJsonText('[{"Note" : "Type/Paste your Json here and tab out to beautify your JSON" }]')
         if (custstate.selectedCustomer && custstate.selectedCustomer !== "" && custstate.regions.length > 0) {
@@ -381,33 +383,99 @@ export default function ProbesRegionConfigComponent() {
             if (response == null) {
                 response = '{"message": "Unable to fetch data." }';
             }
+
             var unformattedjson = JSON.stringify(response);
             var obj = JSON.parse(unformattedjson);
             var formattedJsonString = JSON.stringify(obj, undefined, 4);
             SetTitle("Probes Config Json Information : " + d.data.probeName);
             setJsonText(formattedJsonString);
+            if (obj.type == "Config Not Found") {
+                SetButtonText("Save");
+            }
+            else {
+                SetButtonText("Update");
+            }
             setpopupVisible(true);
-
-            //prettyPrint(e);
         });
 
     });
 
-    const prettyPrint = useCallback((e) => {
+    const updateConfigJson = useCallback((e) => {
         try {
-            e.preventDefault();
-            var ugly = e.component._changedValue;
-            var obj = JSON.parse(ugly);
-            var pretty = JSON.stringify(obj, undefined, 4);
+            if (e.target.innerText == "SAVE") {
+                if (IsValidJson()) {
+                    SaveConfigJson(authstate.auth.idToken, JsonText, "POST").then((response) => {
+                        if (response !== null) {
+                            if (response.message == "Update sent") {
+                                notify("success", "Config saved successfully!...")
+                                setpopupVisible(false);
+                            }
+                            else {
+                                if (response.statusCode == 200) {
+                                    notify("success", "Config saved successfully!...")
+                                    setpopupVisible(false);
+                                }
+                                else {
+                                    notify("error", response.message);
+                                }
 
-            setJsonText(pretty);
+                            }
+                        }
+
+                    });
+                }
+                else {
+                    notify("error", "Invalid JSON please verify your input....");
+                }
+
+            }
+            else if (e.target.innerText == "UPDATE") {
+                if (IsValidJson()) {
+                    SaveConfigJson(authstate.auth.idToken, JsonText, "PUT").then((response) => {
+                        if (response !== null) {
+                            if (response.message == "Update sent") {
+                                notify("success", "Config updated successfully!...")
+                                setpopupVisible(false);
+                            }
+                            else {
+                                if (response.statusCode == 200) {
+                                    notify("success", "Config saved successfully!...")
+                                    setpopupVisible(false);
+                                }
+                                else {
+                                    notify("error", response.message);
+                                }
+                            }
+                        }
+
+                    });
+                }
+                else {
+                    notify("error", "Invalid JSON please verify your input....");
+                }
+            }
+
 
         }
         catch (ex) {
             console.log(ex.message);
+            notify("error", ex.message);
         }
 
     });
+    const IsValidJson = useCallback((e) => {
+        try {
+            const json = JSON.parse(JsonText);
+            return true;
+        } catch (e) {
+            return false;
+        }
+        return true;
+    });
+    const handleMessageChange = useCallback((d) => {
+        setJsonText(d);
+    });
+
     return (
 
         <React.Fragment>
@@ -524,11 +592,14 @@ export default function ProbesRegionConfigComponent() {
                                 // inputAttr="{Test Data}"
                                 // InputProps={{ style: { fontSize: 40 } }}
                                 value={JsonText}
+                                //onChange={handleMessageChange}
+                                onValueChange={handleMessageChange}
                             //label="Config Json"
                             // maxLength={this.state.maxLength}
                             // defaultValue={this.state.value}
                             />
-                            <Button color="primary" variant="contained" style={{ marginTop: '1%' }}>SAVE</Button>
+                            <Button color="primary" variant="contained" onClick={updateConfigJson} style={{ marginTop: '4%', width: '48%' }}>{ButtonText}</Button>
+                            <Button color="secondary" variant="contained" onClick={() => setpopupVisible(false)} style={{ marginTop: '4%', width: '48%', marginLeft: '3%' }}>Cancel</Button>
 
                         </CustomPopup>
                         <DataGrid

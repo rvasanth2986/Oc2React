@@ -122,15 +122,16 @@ export async function downloadJson(token, data, method) {
     }
 }
 
-export async function InfoJson(token, data, method) {
-    const URL = `https://of1kc7bes2.execute-api.us-east-2.amazonaws.com/v1_0_0?probeId=${data}`;
+export async function SaveConfigJson(token, inputJson, method) {
+    const URL = `https://of1kc7bes2.execute-api.us-east-2.amazonaws.com/v1_0_0`;
     try {
         const response = await fetch(URL, {
             method: `${method}`,
             headers: {
                 // 'Authorization': `${token}`,
                 'Content-Type': 'application/json'
-            }
+            },
+            body: `${inputJson}`
         })
         const data = await response.json();
         return data;
