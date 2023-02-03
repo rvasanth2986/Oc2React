@@ -26,9 +26,10 @@ export default function () {
     setLoading(true);
 
     const result = await signIn(email, password,history);
+    console.log("Log Result",result);
     if (!result.isOk) {
       setLoading(false);
-      notify(result.message, 'error', 2000);
+      notify(result.data, 'error', 2000);
     }
   }, [signIn]);
 

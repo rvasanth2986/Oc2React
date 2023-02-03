@@ -1,7 +1,7 @@
 import React, { useState, useEffect, createContext, useContext, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { getUser, signIn as sendSignInRequest } from '../api/auth';
-import { authenticate, checkAutoLogin, runLogoutTimer, saveTokenInLocalStorage } from '../services/AuthService';
+import { authenticate, checkAutoLogin, cognitoUserSignOut, runLogoutTimer, saveTokenInLocalStorage } from '../services/AuthService';
 import { loginConfirmedAction, loginFailedAction, logout } from '../store/actions/AuthActions';
 import { CustomerResetState } from '../store/actions/CustomerAction';
 import { PathResetState } from '../store/actions/TraceDiagramAction';
@@ -75,10 +75,21 @@ function AuthProvider(props) {
   }, []);
 
   const signOut = useCallback(() => {
-    dispatch(PathResetState());
-    dispatch(CustomerResetState());
-    dispatch(logout(props.history));
-    setUser();
+    (async function () {
+      const result = await cognitoUserSignOut(dispatch,props.history);
+      if (result != undefined){
+        if (!result.isOk) {
+          dispatch(PathResetState());
+          dispatch(CustomerResetState());
+          dispatch(logout(props.history));
+          setUser();
+        }
+      }
+      
+
+      setLoading(false);
+    })();
+
   }, []);
 
 

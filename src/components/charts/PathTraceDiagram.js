@@ -37,7 +37,7 @@ const linkColor = "#4d4d4d";
 
 const PathTraceDiagram = ({ sourceProbeId, metricsData }) => {
     const pathstate = useSelector(state => state.path);
-    console.log("pathstate", pathstate);
+    //console.log("pathstate", pathstate);
 
     const dispatch = useDispatch();
 
@@ -250,7 +250,7 @@ const PathTraceDiagram = ({ sourceProbeId, metricsData }) => {
 
     function probesRender(Data) {
 
-        console.log("Grid Data", Data)
+        //console.log("Grid Data", Data)
 
         return <div>
 
@@ -439,7 +439,7 @@ const PathTraceDiagram = ({ sourceProbeId, metricsData }) => {
                                         <p style={{ margin: 0 }}><strong>Hop #{tooltipData.name}</strong></p>
                                         <p style={{ marginBottom: 0, marginTop: -10 }}>________________</p>
                                        
-                                        {tooltipData.hop_IPs && <p className="tooltip-graph-stats"><strong>Hop IPs: </strong>{tooltipData.hop_IPs}</p>}
+                                        {tooltipData.hop_IPs && <p className="tooltip-graph-stats"><strong>Hop IPs: </strong>{tooltipData.hop_IPs.join(", ")}</p>}
                                         {tooltipData.hop_rtt >= 0 && <p className="tooltip-graph-stats"><strong>Reply Latency: </strong>{tooltipData.hop_rtt} ms</p>}
                                         {tooltipData.hop_loss >= 0 && <p className="tooltip-graph-stats" style={{ color: tooltipData.hop_loss > 0 ? tooltipTitleTextColor_NodeLatency : "lightgrey" }}><strong>Loss Detected: </strong>{tooltipData.hop_loss * 100}%</p>}
                                     </div>

@@ -109,6 +109,31 @@ export async function checkAutoLogin(dispatch, history) {
     //const timer = expireDate.getTime() - todaysDate.getTime();
     //runLogoutTimer(dispatch, timer, history);
 }
+export async function cognitoUserSignOut(dispatch, history) {
+  const tokenDetailsString = localStorage.getItem('userDetails');
+  let tokenDetails = '';
+  if (!tokenDetailsString) {
+      dispatch(logout(history));
+      return {
+          isOk: false
+        };
+  }
+  tokenDetails = JSON.parse(tokenDetailsString);
+
+  // Initialize the CognitoUser object
+  const user = new CognitoUser({
+    Pool: UserPool, // The Cognito User Pool where the user is registered
+    Username: tokenDetails.email // The user's username
+  });
+
+  // Call the signOut method to log the user out
+  user.signOut();
+
+  return {
+    isOk: false
+  };
+
+}
 export function runLogoutTimer(dispatch, timer, refreshToken, Username,history) {
   setTimeout(() => {
     refreshsession(dispatch, refreshToken, Username,history);
@@ -218,3 +243,4 @@ export function saveTokenInLocalStorage(tokenDetails) {
   );
   localStorage.setItem('userDetails', JSON.stringify(tokenDetails));
 }
+

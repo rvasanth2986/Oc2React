@@ -3,7 +3,7 @@ import { AreaClosed, Line, Bar } from '@visx/shape';
 import { curveMonotoneX } from '@visx/curve';
 import { LinearGradient } from '@visx/gradient';
 import { AxisBottom, AxisLeft } from '@visx/axis';
-import { scaleLinear, scaleUtc, scaleThreshold } from '@visx/scale';
+import { scaleBand,scaleLinear, scaleUtc, scaleThreshold } from '@visx/scale';
 import { Legend } from '@visx/legend';
 import { useTooltip, useTooltipInPortal, defaultStyles } from '@visx/tooltip';
 import { localPoint } from '@visx/event';
@@ -84,7 +84,7 @@ const AreaChart = ({ metricsData, sourceProbeId, destinationId }) => {
                 }
             });
         }
-
+        console.log("setAreaGraphData",filteredFormattedData);
         setAreaGraphData(filteredFormattedData);
 
     }, [metricsData])

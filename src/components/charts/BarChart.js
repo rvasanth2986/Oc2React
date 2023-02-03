@@ -114,7 +114,7 @@ const BarChart = ({ metricsData, sourceProbeId, destinationId }) => {
         scaleLinear({
             range: [yMax, 0],
             round: true,
-            domain: [0, Math.max(...barGraphData.map((d) => d.value))],
+            domain: [0, Math.max(...barGraphData.map((d) => d.value * 1000))],
         }),
         [yMax, barGraphData]
     );
@@ -265,7 +265,7 @@ function handleMouseMove(event,index,barX,d) {
                                 <strong>{dateFormat(tooltipData.dateObj, "UTC:mmmm d, yyyy")} @ {dateFormat(tooltipData.dateObj, "UTC:HH:MM:ss")}</strong>
                             </div>
                             <div>
-                                <p style={{ margin: 0 }}><strong>{tooltipData.value}% </strong>packet loss</p>
+                                <p style={{ margin: 0 }}><strong>{tooltipData.value * 100}% </strong>packet loss</p>
                                 <p style={{ marginBottom: 0, marginTop: -10 }}>________________</p>
                                 <p className="tooltip-graph-stats"><strong># Packets Transmitted: </strong>{tooltipData.stats.packet_transmit}</p>
                                 <p className="tooltip-graph-stats"><strong># Packets Received: </strong>{tooltipData.stats.packet_receive}</p>

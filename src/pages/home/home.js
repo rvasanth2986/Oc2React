@@ -31,7 +31,7 @@ export default () => {
           let ProbData = [];
           for (let item of custstate.regions) {
               // console.log(item.legComponentAttributes);
-              if (item.probes.length > 0) {
+             // if (item.probes.length > 0) {
                   let attr = [];
                   for (let x of item.probes) {
                       attr.push(x.name);
@@ -40,7 +40,7 @@ export default () => {
                       region : item.region,
                       probes : attr
                   });
-              }
+             // }
           }
           setregionsData(ProbData);
 

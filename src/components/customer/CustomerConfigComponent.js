@@ -51,6 +51,7 @@ export default function CustomerConfigComponent() {
 
 
     const onRowValidating = React.useCallback((e) => {
+        console.log("Cust Up",e);
         const type = e.oldData == undefined ? "insert" : "update";
         if (type == "insert") {
             if ((e.newData != undefined)) {
@@ -68,8 +69,9 @@ export default function CustomerConfigComponent() {
             }
         }
         if (type == "update") {
+       
             if ((e.newData != undefined)) {
-                if ((e.newData.customerName == undefined) || (e.newData.customerName.length <= 0)) {
+                if ((e.newData.customerName !== undefined) && (e.newData.customerName.length <= 0)) {
                     e.errorText = `Customer name missing!`;
                     e.isValid = false;
                     return;
@@ -205,7 +207,7 @@ export default function CustomerConfigComponent() {
                                     onRowValidating={onRowValidating}
                                 >
                                     <Texts addRow="Add New Customer" />
-                                    <Popup title="Add New Customer" showTitle={true} width={700} height={500} />
+                                    <Popup title="Customer Info" showTitle={true} width={700} height={500} />
                                     <Form>
                                         <Item itemType="group" colCount={2} colSpan={2}>
                                             <Item dataField="customerId" />

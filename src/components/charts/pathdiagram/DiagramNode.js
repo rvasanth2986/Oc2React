@@ -16,7 +16,7 @@ const DiagramNode = ({ node, index, hoverId, setHoverId, showTooltip, hideToolti
     const isLastNode = !node.children;
 
     if (isRoot) return <DiagramRootNode node={node} index={index} hoverId={hoverId} setHoverId={setHoverId} />;
-
+    //console.log("Node Data",node.data);
     if (node.data.hop_loss > 0) {
         // The larger the % loss, the less the green and blue value meaning the red color will be more vibrant, visually indicating more loss.
         const greenBlueValue = 200 - Math.ceil(node.data.hop_loss) * 2;
