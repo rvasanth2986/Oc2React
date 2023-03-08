@@ -6,6 +6,7 @@ import { PathResetState } from '../store/actions/TraceDiagramAction';
 // import { CognitoUser, AuthenticationDetails } from "amazon-cognito-identity-js";
 import UserPool from "../UserPool";
 
+
 // export function authenticate(Username, Password) {
 //   const user = new CognitoUser({
 //     Username: Username,
@@ -36,6 +37,23 @@ import UserPool from "../UserPool";
 //   });
 // }
 
+
+export const getSession = async () =>
+await new Promise((resolve, reject) => {
+  const user = UserPool.getCurrentUser();
+  if (user) {
+    user.getSession((err, session) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(session);
+      }
+    });
+  } else {
+    reject();
+  }
+});
+
 export const authenticate = async (Username, Password) =>
 await new Promise((resolve, reject) => {
   // const user = new CognitoUser({ Username, Pool })
@@ -60,7 +78,6 @@ await new Promise((resolve, reject) => {
         refreshToken:  data.getRefreshToken().getToken(),
         isauthenticated: true,
     }
-
       resolve(auth)
     },
 
@@ -100,6 +117,8 @@ export async function checkAutoLogin(dispatch, history) {
 
     runLogoutTimer(dispatch, timer, tokenDetails.refreshToken, tokenDetails.email,history);
 
+    runSignoutTimer(dispatch, history);
+
     dispatch(loginConfirmedAction(tokenDetails));
     return {
         isOk: true,
@@ -134,10 +153,31 @@ export async function cognitoUserSignOut(dispatch, history) {
   };
 
 }
+export function runSignoutTimer(dispatch, history) {
+  setTimeout(() => {
+    CheckToken(dispatch, history);
+  }, 5000);
+}
 export function runLogoutTimer(dispatch, timer, refreshToken, Username,history) {
   setTimeout(() => {
     refreshsession(dispatch, refreshToken, Username,history);
   }, timer);
+}
+
+export function CheckToken(dispatch, history) {
+ 
+   const tokenDetailsString = localStorage.getItem('userDetails');
+  let tokenDetails = '';
+  if (!tokenDetailsString) {
+      //  AuthContext.signOut();
+      dispatch(PathResetState());
+      dispatch(CustomerResetState());
+      cognitoUserSignOut(dispatch, history);
+      
+  }
+  else {
+    runSignoutTimer(dispatch, history);
+  }
 }
 
 export const refreshsession = async (dispatch, refreshToken, Username, history) =>

@@ -3,18 +3,25 @@ import { Bar } from '@visx/shape';
 import { Group } from '@visx/group';
 import { LinearGradient } from '@visx/gradient';
 import { AxisBottom, AxisLeft } from '@visx/axis';
-import { scaleBand, scaleLinear, scaleThreshold } from '@visx/scale';
+import { scaleBand, scaleLinear, scaleThreshold, scaleTime } from '@visx/scale';
 import { Legend } from '@visx/legend';
 import { useTooltip, useTooltipInPortal, defaultStyles } from '@visx/tooltip';
 import { localPoint } from '@visx/event';
 import dateFormat from 'dateformat';
+import { max, bisect, extent } from 'd3-array';
+
 
 // Define colors
-const axisColor = "#4d4d4d";
+const axisColor = "white";
 const contrastColor = "#B9C5E1";
 const contrastColor_Hover = "#8080ff";
 const gradientColorStart = "white";
 const gradientColorEnd = "white";
+
+export const background = '#3b6978';
+export const background2 = '#204051';
+export const accentColor = '#edffea';
+export const accentColorDark = '#75daad';
 
 // Define axis CSS properties
 const axisLabelProps = {
@@ -49,6 +56,10 @@ const BarChart = ({ metricsData, sourceProbeId, destinationId }) => {
          stats: { any extra stats to show in tooltip}
         }
     */
+
+     const getDate = d => new Date(d.time);
+     const getStockValue = d => d.value;
+     const getlossPercentage = d => d.value * 100;
     const [barGraphData, setBarGraphData] = useState([]);
 
     // This state manages the graph size based on the window screen size.
@@ -74,7 +85,8 @@ const BarChart = ({ metricsData, sourceProbeId, destinationId }) => {
             // Note: dateObj is separate from time because for bar graph, can't use a dateScale, so we can't use the pure date obj in x axis.
             filteredFormattedData.push({
                 dateObj: data.checkTime,
-                time: dateFormat(data.checkTime, "UTC:HH:MM:ss"),
+                time: dateFormat(data.checkTime, "UTC:hh:MM TT"),
+                //time: data.checkTime,
                 value: data.checkMsgBody[dataProps[0]].packet_loss_rate,
                 stats: {
                     packet_transmit: data.checkMsgBody[dataProps[0]].packet_transmit,
@@ -83,7 +95,7 @@ const BarChart = ({ metricsData, sourceProbeId, destinationId }) => {
                 }
             });
         }
-
+        console.log("setBarGraphData",filteredFormattedData);
         setBarGraphData(filteredFormattedData);
 
     }, [metricsData])
@@ -108,13 +120,23 @@ const BarChart = ({ metricsData, sourceProbeId, destinationId }) => {
         [xMax, barGraphData]
     );
 
+    // const zScale = useMemo(() =>
+    //     // Use scaleUtc because we are working with date objects as the x-axis values.
+    //     scaleTime({
+    //         range: [leftMargin, xMax],
+    //         round: true,
+    //         domain: extent(barGraphData, getDate),
+    //     }),
+    //     [xMax, barGraphData]
+    // );
+
     // Y Axis scale (packet loss); memoize to optimize performance.
     const yScale = useMemo(() =>
         // Use scaleLinear since packet loss can be a decimal.
         scaleLinear({
             range: [yMax, 0],
             round: true,
-            domain: [0, Math.max(...barGraphData.map((d) => d.value * 1000))],
+            domain: [0, Math.max(...barGraphData.map(getlossPercentage))],
         }),
         [yMax, barGraphData]
     );
@@ -122,7 +144,7 @@ const BarChart = ({ metricsData, sourceProbeId, destinationId }) => {
     // Legend scale to correctly display legend component for the area graph.
     const barGraphLegendScale = scaleThreshold({
         domain: ["Packet Loss %"],
-        range: [contrastColor]
+        range: [accentColor]
     })
 
     // Tooltip objects to define the tooltip's location and state.
@@ -136,13 +158,19 @@ const BarChart = ({ metricsData, sourceProbeId, destinationId }) => {
     } = useTooltip();
 
     // Define tooltip styles.
-    const tooltipStyles = {
-        ...defaultStyles,
-        minWidth: 60,
-        backgroundColor: 'rgba(0,0,0,0.9)',
-        color: "lightgrey"
-    };
+    // const tooltipStyles = {
+    //     ...defaultStyles,
+    //     minWidth: 60,
+    //     backgroundColor: 'rgba(0,0,0,0.9)',
+    //     color: "lightgrey"
+    // };
 
+const tooltipStyles = {
+  ...defaultStyles,
+  background,
+  border: '1px solid white',
+  color: 'white',
+};
     // TooltipInPortal is rendered in a separate child of <body /> and positioned
     // with page coordinates which should be updated on scroll.
     const { containerRef, TooltipInPortal } = useTooltipInPortal({
@@ -189,21 +217,27 @@ function handleMouseMove(event,index,barX,d) {
             
            
                 <div class="m-portlet__body">
-                <svg width={graphSizeState.width} height={graphSizeState.height} ref={containerRef} className="graph-shadow">
-                    <LinearGradient id={"background"} from={gradientColorStart} to={gradientColorEnd} />
-                    <rect width={graphSizeState.width} height={graphSizeState.height} y={0} fill="url(#background)" rx={3} />
+                <svg width={graphSizeState.width} height={graphSizeState.height} ref={containerRef} >
+                    <LinearGradient id={"area-background-gradient"} from={background} to={background2} /> {/* from={gradientColorStart} to={gradientColorEnd} /> */}
+                    <rect width={graphSizeState.width} height={graphSizeState.height}  y={0} fill="url(#area-background-gradient)" rx={14} />
                     <Group top={verticalMargin / 2}>
                         {barGraphData.map((d, index) => {
-                            let fillColor = { original: contrastColor, hover: contrastColor_Hover };
-                            const time = d.time;
+                            let fillColor = { original: accentColor, hover: accentColor };
+                             const time = d.time;
                             const barWidth = xScale.bandwidth();
-                            let barHeight = yMax - (yScale(d.value) ?? 0); // From yScale(d.value), I think I get the range value between yMax and d.value. So from yMax to top edge of bar.
+                            let barHeight = yMax - (yScale(getlossPercentage(d)) ?? 0); // From yScale(d.value), I think I get the range value between yMax and d.value. So from yMax to top edge of bar.
                             if (d.value === 0) {
-                                barHeight = yMax;
-                                fillColor = { original: "rgb(0, 0, 0, 0)", hover: "rgb(0, 0, 0, 0.15)" };
+                               // barHeight = yMax;
+                                fillColor = { original: "rgb(0, 0, 0, 0)", hover: "rgb(0, 0, 0, 0)" };
                             }
                             const barX = xScale(time);   // This gets the position of the band (x domain point) that this data value belongs to. Ex. "10:00" band, "11:00" band etc.
                             const barY = yMax - barHeight; // If you do 0, everything will start on top down. Instead, do this so that all point go from bottom up.
+
+                            // const barWidth = xScale.bandwidth();
+                            // const barHeight = yMax - (yScale(getlossPercentage(d)) ?? 0);
+                            // const barX = xScale(time);
+                            // const barY = yMax - barHeight;
+
                             return (
                                 <Bar
                                     key={`bar-${time}`}
@@ -259,11 +293,12 @@ function handleMouseMove(event,index,barX,d) {
                         labelProps={axisLabelProps}
                     />
 
-                    {tooltipOpen && tooltipData && (
+                    {tooltipOpen && tooltipData && tooltipData.value * 100 > 0  && (
                         <TooltipInPortal top={tooltipTop} left={tooltipLeft} style={tooltipStyles}>
-                            <div style={{ color: contrastColor_Hover }}>
+                        {`${dateFormat(tooltipData.dateObj, "UTC:mmmm d, yyyy")} @ ${dateFormat(tooltipData.dateObj, "UTC:HH:MM:ss")}`}
+                            {/* <div style={{ color: contrastColor_Hover }}>
                                 <strong>{dateFormat(tooltipData.dateObj, "UTC:mmmm d, yyyy")} @ {dateFormat(tooltipData.dateObj, "UTC:HH:MM:ss")}</strong>
-                            </div>
+                            </div> */}
                             <div>
                                 <p style={{ margin: 0 }}><strong>{tooltipData.value * 100}% </strong>packet loss</p>
                                 <p style={{ marginBottom: 0, marginTop: -10 }}>________________</p>

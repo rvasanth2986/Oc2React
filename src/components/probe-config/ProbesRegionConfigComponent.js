@@ -200,6 +200,17 @@ export default function ProbesRegionConfigComponent() {
 
     });
 
+    const validIP = new RegExp(
+        '/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/'
+     );
+
+     function ValidateIPaddress(ipaddress) {  
+        if (/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(ipaddress)) {  
+          return (true)  
+        }  
+        //alert("You have entered an invalid IP address!")  
+        return (false)  
+      } 
     const onRowValidatingProbes = useCallback((e) => {
         const type = e.oldData == undefined ? "insert" : "update";
 
@@ -217,6 +228,16 @@ export default function ProbesRegionConfigComponent() {
                 }
                 if ((e.newData.ptype == undefined) || (e.newData.ptype.length <= 0)) {
                     e.errorText = `Probe type is missing!`;
+                    e.isValid = false;
+                    return;
+                }
+                if (!ValidateIPaddress(e.newData.localIP)) {
+                    e.errorText = `Invalid Local IP!`;
+                    e.isValid = false;
+                    return;
+                }
+                if (!ValidateIPaddress(e.newData.natIP)) {
+                    e.errorText = `Invalid Native IP!`;
                     e.isValid = false;
                     return;
                 }
@@ -251,6 +272,16 @@ export default function ProbesRegionConfigComponent() {
                     e.isValid = false;
                     return;
                 }
+            }
+            if (!ValidateIPaddress(e.newData.localIP)) {
+                e.errorText = `Invalid Local IP!`;
+                e.isValid = false;
+                return;
+            }
+            if (!ValidateIPaddress(e.newData.natIP)) {
+                e.errorText = `Invalid Native IP!`;
+                e.isValid = false;
+                return;
             }
         }
 

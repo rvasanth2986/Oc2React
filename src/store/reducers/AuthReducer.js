@@ -7,6 +7,7 @@ import {
     SIGNUP_FAILED_ACTION,
 } from '../actions/AuthActions';
 
+
 const initialState = {
     auth: {
         email: '',
@@ -21,6 +22,7 @@ const initialState = {
     showLoading: false,
 };
 export function AuthReducer(state = initialState, action) {
+    
     if (action.type === LOGIN_CONFIRMED_ACTION) {
         return {
             ...state,
@@ -32,6 +34,7 @@ export function AuthReducer(state = initialState, action) {
     }
 
     if (action.type === LOGOUT_ACTION) {
+
         return {
             ...state,
             errorMessage: '',

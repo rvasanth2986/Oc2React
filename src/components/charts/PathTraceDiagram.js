@@ -30,6 +30,7 @@ import { MdOutlineWifiTethering, MdTrendingFlat } from 'react-icons/md';
 // Define colors
 const tooltipTitleTextColor = "#5cd6d6";
 const tooltipTitleTextColor_NodeLatency = "#ff8080";
+
 const gradientColorStart = "white";
 //const gradientColorEnd = "#e6e6e6";
 const gradientColorEnd = "white";
@@ -431,6 +432,9 @@ const PathTraceDiagram = ({ sourceProbeId, metricsData }) => {
                             </Tree>
                             {tooltipOpen && tooltipData && (
                                 <TooltipInPortal top={tooltipTop} left={tooltipLeft} style={tooltipStyles}>
+                                    <div style={{ color: tooltipTitleTextColor_NodeLatency }}>
+                                        <strong>{dateFormat(tooltipData.time, "UTC:mmmm d, yyyy")} @ {dateFormat(tooltipData.time, "UTC:HH:MM:ss")}</strong>
+                                    </div>
                                     <div style={{ color: tooltipData.hop_loss > 0 ? tooltipTitleTextColor_NodeLatency : tooltipTitleTextColor }}>
                                         <strong>{sourceProbeId} &#8594; {tooltipData.destinationId}
                                         </strong>

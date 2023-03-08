@@ -17,7 +17,8 @@ import { DataFilterChange, TraceMatrixLoad, TraceMatrixReset } from "../../store
 import { GetTraceMatricsData } from "../../services/TraceMatricsDataService";
 import { SelectBox } from "devextreme-react";
 import dateFormat from 'dateformat';
-
+import { useAuth } from '../../contexts/auth';
+const { unmarshall } = require("@aws-sdk/util-dynamodb");
 // import Typography from '@mui/material/Typography';
 // import TextField from '@mui/material/TextField';
 // import { LocalizationProvider } from '@mui/x-date-pickers-pro';
@@ -26,8 +27,10 @@ import dateFormat from 'dateformat';
 // import Box from '@mui/material/Box';
 
 const ProbesTestHeader = ({checkType}) => {
+    
     const custstate = useSelector((state) => state.cust);
     const pathstate = useSelector((state) => state.path);
+    const authstate = useSelector((state) => state.auth);
     const [SProbesData, setSProbesData] = useState([]);
     const [DProbesData, setDProbesData] = useState([]);
     const [SelectedSourceProbes,setSelectedSourceProbes]= useState("");
@@ -36,7 +39,7 @@ const ProbesTestHeader = ({checkType}) => {
     const[endValue,setendValue]=useState("");
     const[currentValue,setcurrentValue]=useState("");
     const dispatch = useDispatch();
-
+    const { signOut } = useAuth();
     //const [value, setValue] = React.useState<DateRange<Date>>([null, null]);
 
     const mockDataRequestFilters = {
@@ -210,8 +213,44 @@ const ProbesTestHeader = ({checkType}) => {
     //    });
        for (let destination of pathstate.MatrixDataRequestFiltersState.destinationIds) {
            dataRequestFilters.destinationProbeId = destination;
-           GetTraceMatricsData(dataRequestFilters).then((response) => {
-            dispatch(TraceMatrixLoad(response));
+
+           GetTraceMatricsData(dataRequestFilters,authstate.auth.idToken).then(async (response) => {
+               let convertedProbeMetricsArray = [];
+            if(response.status === 200)
+            {
+            
+                const data = await response.json();
+
+                console.log(data);
+      
+                if (Object.keys(data)[0] == "message" && data.message == "Unauthorized") 
+                {
+                        
+                }
+                else {
+                    if (data.body.Items.length !== 0) {
+                        // Convert each awsJSON formatted object into a JSON object and push it into a new array.
+                        for (let probeMetricObj of data.body.Items) {
+                            let convertedProbeMetricObj = unmarshall(probeMetricObj);
+                            // Then parse the contents of each object's property from JSON format.
+                            convertedProbeMetricObj.checkMsgBody = JSON.parse(convertedProbeMetricObj.checkMsgBody);
+                            // Convert checkTime string into Date object for use in graphs.
+                            convertedProbeMetricObj.checkTime = new Date(convertedProbeMetricObj.checkTime);
+                            convertedProbeMetricsArray.push(convertedProbeMetricObj);
+                        }
+                    } else {
+                        // If there is no data, then push an object with the destinationId that does not have data to be displayed in the UI.
+                        // Note: The name "destinationIdWithNoData" should no change because it's used in condition blocks in front to verify that no data available.
+                        convertedProbeMetricsArray.push({ destinationIdWithNoData: destination });
+                    }
+
+                    dispatch(TraceMatrixLoad(convertedProbeMetricsArray));
+                }
+            }
+            else if (response.status === 401) {
+                signOut();
+            }   
+            
         });
        }
 }

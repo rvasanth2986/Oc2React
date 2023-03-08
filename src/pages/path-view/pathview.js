@@ -14,6 +14,7 @@ import {
     FormControl,
     InputGroup,
   } from "react-bootstrap";
+import { useAuth } from '../../contexts/auth';
 const useStyles = makeStyles((theme) => ({
     root: {
         margin: 'auto',
@@ -38,6 +39,7 @@ const useStyles = makeStyles((theme) => ({
     const authstate = useSelector((state) => state.auth);
     const custstate = useSelector((state) => state.cust);
     const path = useSelector((state) => state.path);
+    const { getUserSession } = useAuth();
 
     const dispatch = useDispatch();
 
@@ -78,6 +80,18 @@ const useStyles = makeStyles((theme) => ({
 
     
  }, [path.MatrixData]);
+
+//  useEffect(() => {
+//     const result = getUserSession();
+//     console.log("session Result",result);
+//     // if (!result.isOk) {
+//     //   notify(result.data, 'error', 2000);
+//     // }
+//     // getUserSession()
+//     //   .then(session => {
+//     //     console.log('Session:', session);
+//     //   })
+//   }, []);
     function submit() {
              dispatch(TraceMatrixReset([]));   // Reset the probe metrics data state.
 

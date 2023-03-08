@@ -3,15 +3,15 @@ import { AreaClosed, Line, Bar } from '@visx/shape';
 import { curveMonotoneX } from '@visx/curve';
 import { LinearGradient } from '@visx/gradient';
 import { AxisBottom, AxisLeft } from '@visx/axis';
-import { scaleBand,scaleLinear, scaleUtc, scaleThreshold } from '@visx/scale';
+import { scaleBand,scaleLinear, scaleUtc, scaleThreshold, scaleTime } from '@visx/scale';
 import { Legend } from '@visx/legend';
-import { useTooltip, useTooltipInPortal, defaultStyles } from '@visx/tooltip';
+import { useTooltip, useTooltipInPortal,TooltipWithBounds, defaultStyles, Tooltip } from '@visx/tooltip';
 import { localPoint } from '@visx/event';
-import { bisect } from 'd3-array';
+import { max, bisect, extent } from 'd3-array';
 import dateFormat from 'dateformat';
 
 // Define colors.
-const axisColor = "#4d4d4d";
+const axisColor = "white";
 const contrastColor = "black";
 const lightContrastColor = "#ff8080";
 const gradientColorStart = "white";
@@ -20,6 +20,17 @@ const graphFillColorStart = "rgb(126, 147, 200, 0.2)";
 const graphFillColorEnd = "rgb(126, 147, 200, 0.6)";
 const graphStrokeColor = "black";
 
+export const background = '#3b6978';
+export const background2 = '#204051';
+export const accentColor = '#edffea';
+export const accentColorDark = '#75daad';
+
+const tooltipStyles = {
+  ...defaultStyles,
+  background,
+  border: '1px solid white',
+  color: 'white',
+};
 
 // Define axis CSS properties
 const axisLabelProps = {
@@ -58,6 +69,8 @@ const AreaChart = ({ metricsData, sourceProbeId, destinationId }) => {
     const initialGraphSizeState = { width: 600, height: 400 }
     const [graphSizeState, setGraphSize] = useState(initialGraphSizeState);
 
+     const getDate = d =>  d.time;
+     const getStockValue = d => d.value;
     // If the window width is large than 1400px then set diagram to fit in half the window (the other half will be the bar graph).
     // Height = 2/3 Width
     useEffect(() => {
@@ -75,7 +88,7 @@ const AreaChart = ({ metricsData, sourceProbeId, destinationId }) => {
             const dataObjProps = Object.keys(dataObj.checkMsgBody); // Get prop names within checkMsgBody property.
 
             filteredFormattedData.push({
-                time: dataObj.checkTime,
+                time: dataObj.checkTime, 
                 value: dataObj.checkMsgBody[dataObjProps[0]].rtt_avg,
                 stats: {
                     stdDev: dataObj.checkMsgBody[dataObjProps[0]].rtt_mdev,
@@ -97,23 +110,45 @@ const AreaChart = ({ metricsData, sourceProbeId, destinationId }) => {
     const xMax = graphSizeState.width - leftMargin + 20;
     const yMax = graphSizeState.height - verticalMargin;
 
+    // // X Axis scale (time); memoize to optimize performance.
+    // const xScale = useMemo(() =>
+    //     // Use scaleUtc because we are working with date objects as the x-axis values.
+    //     scaleUtc({
+    //         range: [leftMargin, xMax],
+    //         round: true,
+    //         domain: [Math.min(...areaGraphData.map((data) => data.time)), Math.max(...areaGraphData.map((data) => data.time))],
+    //     }),
+    //     [xMax, areaGraphData]
+    // );
+
     // X Axis scale (time); memoize to optimize performance.
     const xScale = useMemo(() =>
         // Use scaleUtc because we are working with date objects as the x-axis values.
         scaleUtc({
             range: [leftMargin, xMax],
             round: true,
-            domain: [Math.min(...areaGraphData.map((data) => data.time)), Math.max(...areaGraphData.map((data) => data.time))],
+            domain: [Math.min(...areaGraphData.map((data) => data.time)), Math.max(...areaGraphData.map((data) => data.time))], //extent(areaGraphData, getDate),
         }),
         [xMax, areaGraphData]
     );
+
+    // // Y Axis scale (latency); memoize to optimize performance.
+    // const yScale = useMemo(() =>
+    //     scaleLinear({
+    //         range: [yMax, verticalMargin],
+    //         round: true,
+    //         domain: [0, Math.max(...areaGraphData.map((d) => d.value))],
+    //     }),
+    //     [yMax, areaGraphData]
+    // );
 
     // Y Axis scale (latency); memoize to optimize performance.
     const yScale = useMemo(() =>
         scaleLinear({
             range: [yMax, verticalMargin],
-            round: true,
-            domain: [0, Math.max(...areaGraphData.map((d) => d.value))],
+            // round: true,
+            nice: true,
+            domain: [0, (max(areaGraphData, getStockValue) || 0)],
         }),
         [yMax, areaGraphData]
     );
@@ -121,7 +156,7 @@ const AreaChart = ({ metricsData, sourceProbeId, destinationId }) => {
     // Legend scale to correctly display legend component for the area graph.
     const areaGraphLegendScale = scaleThreshold({
         domain: ["Latency (ms)"],
-        range: [graphStrokeColor]
+        range: [accentColor]
     })
 
     // Tooltip objects to define the tooltip's location and state.
@@ -134,12 +169,12 @@ const AreaChart = ({ metricsData, sourceProbeId, destinationId }) => {
     } = useTooltip();
 
     // Define tooltip styles.
-    const tooltipStyles = {
-        ...defaultStyles,
-        minWidth: 60,
-        backgroundColor: 'rgba(0,0,0,0.9)',
-        color: 'lightgrey'
-    };
+    // const tooltipStyles = {
+    //     ...defaultStyles,
+    //     minWidth: 60,
+    //     backgroundColor: 'rgba(0,0,0,0.9)',
+    //     color: 'lightgrey'
+    // };
 
     // Handle whenever mouse moves onto a point on graph that should show a tooltip.
     // Use useCallback to return a memoized the callback (different from useMemo which returns a memoized value)
@@ -191,20 +226,22 @@ const AreaChart = ({ metricsData, sourceProbeId, destinationId }) => {
                                         <Legend scale={areaGraphLegendScale} direction="row" labelMargin="0 15px 0 0" style={{ fontFamily: 'Corbel Light', fontWeight: 'bold', display: 'inline-block' }} />
                                         </div>
                                     </div>
-                                    <div class="m-portlet__body">
+            <div class="m-portlet__body">
 
-                                    <svg width={graphSizeState.width} height={graphSizeState.height} ref={containerRef} className="graph-shadow">
-                <LinearGradient id={"background"} from={gradientColorStart} to={gradientColorEnd} />
-                <LinearGradient id={"areaFill"} from={graphFillColorStart} to={graphFillColorEnd} />
-                <rect width={graphSizeState.width} height={graphSizeState.height} x={0} y={0} fill="url(#background)" rx={3} />
+                <svg width={graphSizeState.width} height={graphSizeState.height} ref={containerRef} >
+                <LinearGradient id={"area-background-gradient"} from={background} to={background2} />
+                <LinearGradient id={"area-gradient"} from={accentColor} to={accentColor} toOpacity={0.1} />
+                <rect width={graphSizeState.width} height={graphSizeState.height} x={0} y={0} rx={14} fill="url(#area-background-gradient)" />
                 <AreaClosed
                     data={areaGraphData}
-                    x={d => xScale(d.time) ?? 0}
-                    y={d => yScale(d.value) ?? 0}
+                    // x={d => xScale(d.time) ?? 0}
+                    // y={d => yScale(d.value) ?? 0}
+                    x={(d) => xScale(getDate(d)) ?? 0}
+                    y={(d) => yScale(getStockValue(d)) ?? 0}
                     yScale={yScale}
                     strokeWidth={1}
-                    stroke={graphStrokeColor}
-                    fill="url(#areaFill)"
+                    stroke="url(#area-gradient)"
+                    fill="url(#area-gradient)"
                     curve={curveMonotoneX}
                 />
                 <Bar
@@ -214,7 +251,7 @@ const AreaChart = ({ metricsData, sourceProbeId, destinationId }) => {
                     height={yMax}
                     fill="transparent"
                     rx={14}
-                    style={{ cursor: 'pointer' }}
+                   // style={{ cursor: 'pointer' }}
                     onTouchStart={handleTooltip}
                     onTouchMove={handleTooltip}
                     onMouseMove={handleTooltip}
@@ -245,7 +282,7 @@ const AreaChart = ({ metricsData, sourceProbeId, destinationId }) => {
                         <Line
                             from={{ x: tooltipLeft, y: verticalMargin }}
                             to={{ x: tooltipLeft, y: yMax + verticalMargin }}
-                            stroke={contrastColor}
+                            stroke={accentColorDark}
                             strokeWidth={2}
                             pointerEvents="none"
                             strokeDasharray="5,2"
@@ -265,8 +302,8 @@ const AreaChart = ({ metricsData, sourceProbeId, destinationId }) => {
                             cx={tooltipLeft}
                             cy={tooltipTop}
                             r={4}
-                            fill={gradientColorStart}
-                            stroke={axisColor}
+                            fill={accentColorDark}
+                            stroke="white"
                             strokeWidth={2}
                             pointerEvents="none"
                         />
@@ -276,18 +313,31 @@ const AreaChart = ({ metricsData, sourceProbeId, destinationId }) => {
             {tooltipData && (
                 <div>
                     <TooltipInPortal top={tooltipTop} left={tooltipLeft} style={tooltipStyles}>
-                        <div style={{ color: lightContrastColor }}>
-                            <strong>{dateFormat(tooltipData.time, "UTC:mmmm d, yyyy")} @ {dateFormat(tooltipData.time, "UTC:HH:MM:ss")}</strong>
-                        </div>
-                        <div>
-                            <p style={{ margin: 0 }}><strong>{tooltipData.value} ms </strong>latency</p>
-                            <p style={{ marginBottom: 0, marginTop: -10 }}>________________</p>
-                            <p className="tooltip-graph-stats"><strong>Max: </strong>{tooltipData.stats.max} ms</p>
-                            <p className="tooltip-graph-stats"><strong>Min: </strong>{tooltipData.stats.min} ms</p>
-                            <p className="tooltip-graph-stats"><strong>Std Dev: </strong>{tooltipData.stats.stdDev} ms</p>
-                        </div>
+                        {`${getStockValue(tooltipData)}, ${dateFormat(tooltipData.time, "UTC:mmmm d, yyyy")} @ ${dateFormat(tooltipData.time, "UTC:HH:MM:ss")}`}
                     </TooltipInPortal>
                 </div>
+                // <div>
+                //     <TooltipWithBounds
+                //     key={Math.random()}
+                //     top={tooltipTop - 12}
+                //     left={tooltipLeft + 12}
+                //     style={tooltipStyles}
+                //     >
+                //     {`${getStockValue(tooltipData)}, ${dateFormat(tooltipData.time, "UTC:mmmm d, yyyy")} @ ${dateFormat(tooltipData.time, "UTC:HH:MM:ss")}`}
+                //     </TooltipWithBounds>
+                //     <Tooltip
+                //     top={tooltipTop - 12}
+                //     left={tooltipLeft}
+                //     style={{
+                //         ...defaultStyles,
+                //         minWidth: 72,
+                //         textAlign: 'center',
+                //         transform: 'translateX(-50%)',
+                //     }}
+                //     >
+                //     {dateFormat(getDate(tooltipData))}
+                //     </Tooltip>
+                // </div>
             )}
             </div>
             </div>

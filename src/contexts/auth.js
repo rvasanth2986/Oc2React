@@ -1,7 +1,7 @@
 import React, { useState, useEffect, createContext, useContext, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { getUser, signIn as sendSignInRequest } from '../api/auth';
-import { authenticate, checkAutoLogin, cognitoUserSignOut, runLogoutTimer, saveTokenInLocalStorage } from '../services/AuthService';
+import { authenticate, checkAutoLogin, cognitoUserSignOut, getSession, runLogoutTimer, saveTokenInLocalStorage } from '../services/AuthService';
 import { loginConfirmedAction, loginFailedAction, logout } from '../store/actions/AuthActions';
 import { CustomerResetState } from '../store/actions/CustomerAction';
 import { PathResetState } from '../store/actions/TraceDiagramAction';
@@ -18,6 +18,7 @@ function AuthProvider(props) {
       if (result != undefined){
         if (result.isOk) {
           setUser(result.data);
+          runSignoutTimerNew(dispatch, props.history);
         }
       }
       
@@ -47,7 +48,7 @@ function AuthProvider(props) {
           response.expiresIn / 1000,
           response.refreshToken,response.email,history
       );
-
+        runSignoutTimerNew(dispatch, history);
         dispatch(loginConfirmedAction(response));
         //history.push('/');
        // GetCustomers(response.idToken);
@@ -74,6 +75,50 @@ function AuthProvider(props) {
      return auth;
   }, []);
 
+
+const runSignoutTimerNew = useCallback((dispatch, history) => {
+     setTimeout(() => {
+    CheckToken(dispatch, history);
+  }, 5000);
+  }, []);
+
+const CheckToken = useCallback((dispatch, history) => {
+    const tokenDetailsString = localStorage.getItem('userDetails');
+  let tokenDetails = '';
+  if (!tokenDetailsString) {
+      //  AuthContext.signOut();
+      signOut();
+      
+  }
+  else {
+    runSignoutTimerNew(dispatch, history);
+  }
+  }, []);
+
+
+  const getUserSession = useCallback(async () => {
+    const auth = {
+      isOk: false,
+      data: null,
+      message: '',
+    }
+      await getSession()
+      .then((response) => {
+        console.log("Get Session response",response);
+        auth.isOk =  true;
+        auth.data = response;
+      })
+      .catch((error) => {
+        console.log("Get Session Error",error);
+        const errorMessage = (error) ? error.message : "";
+        dispatch(logout(props.history));
+        setUser();
+        auth.isOk =  false;
+        auth.data = errorMessage;
+      });
+      return auth;
+  }, []);
+
   const signOut = useCallback(() => {
     (async function () {
       const result = await cognitoUserSignOut(dispatch,props.history);
@@ -93,8 +138,9 @@ function AuthProvider(props) {
   }, []);
 
 
+
   return (
-    <AuthContext.Provider value={{ user, signIn, signOut, loading }} {...props} />
+    <AuthContext.Provider value={{ user, signIn, signOut, getUserSession, loading }} {...props} />
   );
 }
 
